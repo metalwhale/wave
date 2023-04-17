@@ -1,0 +1,11 @@
+---
+- hosts: bastion
+  become: yes
+  roles:
+    - common
+
+- hosts: bastion
+  roles:
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ ansible_env.USER }}"

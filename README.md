@@ -17,6 +17,19 @@ pip install -U -r requirements-2.12.txt
 cd ../../
 ```
 
+Install galaxy roles
+```
+ansible-galaxy install -r requirements.yml
+```
+
+## Apply base playbooks
+(Assume that bastion is the local host)
+```
+cd base/
+ansible-playbook -i inventory.yaml --ask-become-pass bastion.yml
+cd ../
+```
+
 ## Deploy kubernetes cluster
 ```
 cd kubernetes/kubespray/
