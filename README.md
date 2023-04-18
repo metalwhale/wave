@@ -34,5 +34,6 @@ cd ../
 ```
 cd kubernetes/kubespray/
 ansible-playbook -i ../inventory --become --become-user=root --ask-become-pass cluster.yml
+ansible-playbook -i ../inventory --become --become-user=root --ask-become-pass ../custom/cluster.yml
 cd ../../
 ```

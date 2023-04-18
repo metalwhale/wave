@@ -1,0 +1,13 @@
+# Copied from `wave/kubernetes/kubespray/playbooks/cluster.yml` file
+---
+- hosts: kube_control_plane
+  gather_facts: False
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - role: kubespray-defaults
+    - role: roles/argocd
+      when:
+        - argocd_enabled
+        - inventory_hostname == groups['kube_control_plane'][0]
+      tags:
+        - argocd

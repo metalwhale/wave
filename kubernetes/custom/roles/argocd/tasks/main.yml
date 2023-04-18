@@ -1,0 +1,22 @@
+# See: ../kubespray/roles/kubernetes-apps/argocd/tasks/main.yml
+---
+- name: Debug
+  debug:
+    msg: "{{ argocd_enabled }} {{ argocd_namespace }}"
+- name: Custom | ArgoCD | Create directory to store manifests
+  file:
+    path: "{{ custom_kube_config_dir }}/argocd"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+- name: Custom | ArgoCD | Create manifests from templates
+  template:
+    src: application.yaml.j2
+    dest: "{{ custom_kube_config_dir }}/argocd/application.yaml"
+- name: Custom | ArgoCD | Deploy application
+  become: true
+  kube:
+    kubectl: "{{ bin_dir }}/kubectl"
+    filename: "{{ custom_kube_config_dir }}/argocd/application.yaml"
+    state: latest
