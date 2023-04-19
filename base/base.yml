@@ -4,7 +4,7 @@
   roles:
     - common
 
-- hosts: bastion
+- hosts: all
   roles:
     - role: gantsign.oh-my-zsh
       users:

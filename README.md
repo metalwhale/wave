@@ -26,7 +26,7 @@ ansible-galaxy install -r requirements.yml
 (Assume that bastion is the local host)
 ```
 cd base/
-ansible-playbook -i inventory.yaml --ask-become-pass bastion.yml
+ansible-playbook -i inventory.yaml --ask-become-pass base.yml
 cd ../
 ```
 

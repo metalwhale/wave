@@ -1,8 +1,5 @@
-# See: ../kubespray/roles/kubernetes-apps/argocd/tasks/main.yml
+# See: wave/kubernetes/kubespray/roles/kubernetes-apps/argocd/tasks/main.yml
 ---
-- name: Debug
-  debug:
-    msg: "{{ argocd_enabled }} {{ argocd_namespace }}"
 - name: Custom | ArgoCD | Create directory to store manifests
   file:
     path: "{{ custom_kube_config_dir }}/argocd"
