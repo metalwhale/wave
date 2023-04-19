@@ -6,7 +6,7 @@ Create a virtual environment:
 ```
 sudo apt-get install -y python3-pip
 pip3 install -U virtualenv
-virtualenv --python=$(which python3) ansible
+python3 -m virtualenv --python=$(which python3) ansible
 source ansible/bin/activate
 ```
 
