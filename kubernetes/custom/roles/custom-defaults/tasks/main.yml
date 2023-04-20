@@ -1,0 +1,8 @@
+---
+- name: Custom | Custom defaults | Install pip3
+  apt:
+    name: python3-pip
+- name: Custom | Custom defaults | Install requirements
+  pip:
+    name:
+      - kubernetes==26.1.0 # Prerequisite for k8s module

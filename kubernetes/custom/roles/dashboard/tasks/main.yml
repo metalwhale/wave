@@ -1,0 +1,11 @@
+---
+# See: https://github.com/kubernetes/dashboard/tree/master/docs/user/accessing-dashboard#nodeport
+- name: Custom | Dashboard | Change to NodePort service
+  k8s:
+    state: patched
+    kind: Service
+    namespace: "{{ dashboard_namespace }}"
+    name: kubernetes-dashboard
+    definition:
+      spec:
+        type: NodePort

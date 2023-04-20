@@ -17,13 +17,6 @@
     kubectl: "{{ bin_dir }}/kubectl"
     filename: "{{ custom_kube_config_dir }}/argocd/application.yaml"
     state: latest
-- name: Custom | ArgoCD | Install pip3
-  apt:
-    name: python3-pip
-- name: Custom | ArgoCD | Install requirements
-  pip:
-    name:
-      - kubernetes==26.1.0 # Prerequisite for k8s module
 - name: Custom | ArgoCD | Update configmap
   k8s:
     state: patched

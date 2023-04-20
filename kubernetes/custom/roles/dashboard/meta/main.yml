@@ -1,5 +1,5 @@
 # Copied from `wave/kubernetes/kubespray/roles/kubernetes-apps/meta/main.yml` file
 ---
 dependencies:
-  - role: kubernetes-apps/argocd
+  - role: kubernetes-apps/ansible
   - role: roles/custom-defaults

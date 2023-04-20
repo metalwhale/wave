@@ -11,3 +11,9 @@
         - inventory_hostname == groups['kube_control_plane'][0]
       tags:
         - argocd
+    - role: roles/dashboard
+      when:
+        - dashboard_enabled
+        - inventory_hostname == groups['kube_control_plane'][0]
+      tags:
+        - dashboard
