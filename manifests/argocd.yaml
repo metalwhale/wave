@@ -19,3 +19,29 @@ spec:
                 name: argocd-server
                 port:
                   name: http
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sandbox
+  labels:
+    name: sandbox
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sandbox
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/sandbox
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sandbox
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
