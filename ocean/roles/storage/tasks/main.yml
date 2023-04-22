@@ -1,0 +1,14 @@
+# See: https://github.com/kubernetes-sigs/kubespray/blob/master/docs/kubernetes-apps/local_volume_provisioner.md
+- name: Create storage directory
+  file:
+    path: "/storage/{{ item }}"
+    state: directory
+  loop: "{{ volumes }}"
+- name: Mount and bind storage volume
+  mount:
+    path: "/mnt/disks/storage-{{ item }}"
+    src: "/storage/{{ item }}"
+    opts: bind
+    state: mounted
+    fstype: none
+  loop: "{{ volumes }}"

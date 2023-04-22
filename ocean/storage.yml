@@ -1,0 +1,8 @@
+---
+- hosts: kube_node
+  vars:
+    volumes:
+      - vol1
+      - vol2
+  roles:
+    - storage

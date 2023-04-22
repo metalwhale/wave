@@ -25,15 +25,22 @@ ansible-galaxy install -r requirements.yml
 ## Apply base playbooks
 (Assume that bastion is the local host)
 ```
-cd base/
+cd ocean/
 ansible-playbook -i inventory.yaml --ask-become-pass base.yml
 cd ../
 ```
 
 ## Deploy kubernetes cluster
+Apply cluster playbooks:
 ```
 cd kubernetes/kubespray/
 ansible-playbook -i ../inventory --become --become-user=root --ask-become-pass cluster.yml
 ansible-playbook -i ../inventory --become --become-user=root --ask-become-pass ../custom/cluster.yml
 cd ../../
+```
+Create storage:
+```
+cd ocean/
+ansible-playbook -i inventory.yaml --become --become-user=root --ask-become-pass storage.yml
+cd ../
 ```
