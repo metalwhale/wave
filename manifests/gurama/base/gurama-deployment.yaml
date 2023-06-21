@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gurama-deployment
+  labels:
+    app: gurama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gurama
+  template:
+    metadata:
+      labels:
+        app: gurama
+    spec:
+      containers:
+        - name: gurama
+          image: metalwhaledev/gurama:0.1.0
+          env:
+            - name: GURAMA_APP_PORT
+              value: "7860"
+            - name: GURAMA_APP_PREFIX
+              value: /gurama
+            - name: GURAMA_APP_THREADS
+              value: "6"
+          ports:
+            - containerPort: 7860
+          resources:
+            requests:
+              cpu: "6400m" # Greater than GURAMA_APP_THREADS
+              memory: "6Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gurama-app
+spec:
+  selector:
+    app: gurama
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 7860
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gurama-app-http-ingress
+  namespace: gurama
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /gurama # GURAMA_APP_PREFIX
+            pathType: Prefix
+            backend:
+              service:
+                name: gurama-app
+                port:
+                  number: 80

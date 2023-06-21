@@ -46,6 +46,32 @@ spec:
       prune: true
       selfHeal: true
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gurama
+  labels:
+    name: gurama
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gurama
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/gurama
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gurama
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
