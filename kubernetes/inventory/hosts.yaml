@@ -12,6 +12,10 @@ all:
       ansible_host: 10.0.50.23
       ip: 10.0.50.23
       access_ip: 10.0.50.23
+    node4:
+      ansible_host: 10.0.50.113
+      ip: 10.0.50.113
+      access_ip: 10.0.50.113
   children:
     kube_control_plane:
       hosts:
@@ -22,6 +26,7 @@ all:
         node1:
         node2:
         node3:
+        node4:
     etcd:
       hosts:
         node1:
