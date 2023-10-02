@@ -1,0 +1,19 @@
+resources:
+  - manifests/example
+patchesStrategicMerge:
+  - pvc.patch.yaml
+patches:
+  - patch: |-
+      - op: replace
+        path: "/apiVersion"
+        value: autoscaling/v2
+    target:
+      group: autoscaling
+      version: v2beta2
+  - patch: |-
+      - op: replace
+        path: "/apiVersion"
+        value: policy/v1
+    target:
+      group: policy
+      version: v1beta1
