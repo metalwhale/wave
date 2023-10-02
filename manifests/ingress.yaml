@@ -1,0 +1,51 @@
+---
+# See: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/version: 1.8.1
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+spec:
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - appProtocol: http
+      name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    # See: https://github.com/kubernetes-sigs/kubespray/blob/v2.23.0/roles/kubernetes-apps/ingress_controller/ingress_nginx/templates/ds-ingress-nginx-controller.yml.j2#L18-L19
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  type: LoadBalancer
+---
+# See:
+# - https://argo-cd.readthedocs.io/en/release-2.8/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller
+# - https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/
+#   We don't need `ingressClassName: nginx`. See: https://github.com/kubernetes-sigs/kubespray/blob/v2.23.0/roles/kubernetes-apps/ingress_controller/ingress_nginx/defaults/main.yml#L17
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  namespace: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /argocd # See: https://github.com/metalwhale/ocean/blob/main/kubernetes/custom/roles/argocd/tasks/main.yml
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  name: http

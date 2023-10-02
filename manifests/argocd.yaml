@@ -1,25 +1,4 @@
 ---
-# See: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-multiple-ingress-objects-and-hosts
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: argocd-server-http-ingress
-  namespace: argocd
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /argocd # The root path. See: wave/kubernetes/custom/roles/argocd/tasks/main.yml
-            pathType: Prefix
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  name: http
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -60,3 +39,29 @@ spec:
       name: inferenceservices.serving.kserve.io
       jqPathExpressions:
         - .spec.conversion.webhook.clientConfig.caBundle
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sandbox
+  labels:
+    name: sandbox
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sandbox
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/sandbox
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sandbox
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
