@@ -4,3 +4,9 @@ namespace: sandbox
 
 resources:
   - app.yaml
+
+patches:
+  - path: sandbox.patch.yaml
+    target:
+      kind: Deployment
+      labelSelector: app=sandbox

@@ -1,0 +1,168 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beach
+  labels:
+    app: beach
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beach
+  template:
+    metadata:
+      labels:
+        app: beach
+    spec:
+      containers:
+        - name: beach
+          image: ubuntu:22.04
+          env:
+            - name: DATABASE_HOST
+              value: coral-ro.newswaters.svc
+            - name: DATABASE_DB
+              value: app
+            - name: DATABASE_USER
+              value: app
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coral-app
+                  key: password
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          stdin: true
+          tty: true
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: skimmer-migration
+spec:
+  template:
+    spec:
+      containers:
+        # See: https://github.com/metalwhale/newswaters
+        - name: skimmer-migration
+          image: metalwhaledev/newswaters-skimmer:0.1.0
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_HOST
+              value: coral-rw.newswaters.svc
+            - name: DATABASE_DB
+              value: app
+            - name: DATABASE_USER
+              value: app
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coral-app
+                  key: password
+            - name: DATABASE_URL
+              value: "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST)/$(DATABASE_DB)"
+          command:
+            - diesel
+            - migration
+            - run
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: OnFailure
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skimmer-items
+  labels:
+    app: skimmer-items
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skimmer-items
+  template:
+    metadata:
+      labels:
+        app: skimmer-items
+    spec:
+      containers:
+        # See: https://github.com/metalwhale/newswaters
+        - name: skimmer-items
+          image: metalwhaledev/newswaters-skimmer:0.1.0
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_HOST
+              value: coral-rw.newswaters.svc
+            - name: DATABASE_DB
+              value: app
+            - name: DATABASE_USER
+              value: app
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coral-app
+                  key: password
+            - name: SKIMMER_ITEMS_NUM
+              value: "2000000"
+            - name: SKIMMER_PERMITS_NUM
+              value: "50"
+            - name: SKIMMER_BATCH_SIZE
+              value: "1000"
+          command:
+            - skimmer
+            - items
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "2000m"
+          securityContext:
+            runAsUser: 1000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skimmer-item-urls-0
+  labels:
+    app: skimmer-item-urls
+spec:
+  template:
+    spec:
+      containers:
+        - name: skimmer-item-urls
+          env:
+            - name: SKIMMER_REPLICAS_NUM
+              value: "2"
+            - name: SKIMMER_REPLICA_INDEX
+              value: "0"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skimmer-item-urls-1
+  labels:
+    app: skimmer-item-urls
+spec:
+  template:
+    spec:
+      containers:
+        - name: skimmer-item-urls
+          env:
+            - name: SKIMMER_REPLICAS_NUM
+              value: "2"
+            - name: SKIMMER_REPLICA_INDEX
+              value: "1"
