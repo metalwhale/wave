@@ -19,7 +19,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-item-urls
-          image: metalwhaledev/newswaters-skimmer:0.1.0
+          image: metalwhaledev/newswaters-skimmer:0.1.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -34,11 +34,11 @@ spec:
                   name: coral-app
                   key: password
             - name: SKIMMER_ITEMS_NUM
-              value: "2000000"
+              value: "2500000"
             - name: SKIMMER_PERMITS_NUM
               value: "20"
             - name: SKIMMER_BATCH_SIZE
-              value: "50000"
+              value: "2500000"
           command:
             - skimmer
             - item_urls

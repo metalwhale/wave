@@ -50,7 +50,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.1.0
+          image: metalwhaledev/newswaters-skimmer:0.1.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -100,7 +100,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-items
-          image: metalwhaledev/newswaters-skimmer:0.1.0
+          image: metalwhaledev/newswaters-skimmer:0.1.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
