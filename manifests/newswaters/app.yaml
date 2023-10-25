@@ -40,6 +40,51 @@ spec:
           stdin: true
           tty: true
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echolocator
+  labels:
+    app: echolocator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: echolocator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: echolocator
+    spec:
+      containers:
+        # See: https://github.com/metalwhale/newswaters
+        - name: echolocator
+          image: metalwhaledev/newswaters-echolocator:0.1.0
+          imagePullPolicy: Always
+          env:
+            - name: ECHOLOCATOR_PORT
+              value: "3000"
+          command:
+            - /bin/echolocator
+          resources:
+            limits:
+              memory: "12Gi"
+              cpu: "4000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echolocator
+spec:
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: echolocator
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -50,7 +95,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.1.4
+          image: metalwhaledev/newswaters-skimmer:0.2.0
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -82,10 +127,11 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-items
+  name: skimmer-collect-items
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
+  concurrencyPolicy: Replace
   schedule: "0 * * * *"
   jobTemplate:
     spec:
@@ -93,8 +139,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-items
-              image: metalwhaledev/newswaters-skimmer:0.1.4
+            - name: skimmer-collect-items
+              image: metalwhaledev/newswaters-skimmer:0.2.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -118,7 +164,7 @@ spec:
                   value: "1000"
               command:
                 - skimmer
-                - items
+                - collect_items
               resources:
                 requests:
                   memory: "256Mi"
@@ -133,10 +179,11 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-item-urls
+  name: skimmer-collect-item-urls
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
+  concurrencyPolicy: Replace
   schedule: "10 * * * *"
   jobTemplate:
     spec:
@@ -144,8 +191,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.1.4
+            - name: skimmer-collect-item-urls
+              image: metalwhaledev/newswaters-skimmer:0.2.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -169,7 +216,7 @@ spec:
                   value: "100000"
               command:
                 - skimmer
-                - item_urls
+                - collect_item_urls
               resources:
                 requests:
                   memory: "4Gi"
@@ -177,6 +224,62 @@ spec:
                 limits:
                   memory: "8Gi"
                   cpu: "2000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-consume-top-stories
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-consume-top-stories
+              image: metalwhaledev/newswaters-skimmer:0.2.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: ECHOLOCATOR_HOST
+                  value: echolocator.newswaters.svc
+                - name: ECHOLOCATOR_PORT
+                  value: "3000"
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_TOP_STORIES_NUM
+                  value: "30"
+                - name: SKIMMER_TEXT_MIN_LINE_LENGTH
+                  value: "80"
+                - name: SKIMMER_TEXT_MAX_TOTAL_LENGTH
+                  value: "2400"
+              command:
+                - skimmer
+                - consume_top_stories
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
