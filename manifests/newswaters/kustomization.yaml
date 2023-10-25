@@ -12,9 +12,3 @@ helmCharts:
 resources:
   - database.yaml
   - app.yaml
-
-patches:
-  - path: skimmer-item-urls.patch.yaml
-    target:
-      kind: Deployment
-      labelSelector: app=skimmer-item-urls

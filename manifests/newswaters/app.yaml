@@ -50,7 +50,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.1.1
+          image: metalwhaledev/newswaters-skimmer:0.1.4
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -79,90 +79,104 @@ spec:
               cpu: "500m"
       restartPolicy: OnFailure
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: CronJob
 metadata:
   name: skimmer-items
-  labels:
-    app: skimmer-items
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: skimmer-items
-  template:
-    metadata:
-      labels:
-        app: skimmer-items
+  schedule: "0 * * * *"
+  jobTemplate:
     spec:
-      containers:
-        # See: https://github.com/metalwhale/newswaters
-        - name: skimmer-items
-          image: metalwhaledev/newswaters-skimmer:0.1.1
-          imagePullPolicy: Always
-          env:
-            - name: DATABASE_HOST
-              value: coral-rw.newswaters.svc
-            - name: DATABASE_DB
-              value: app
-            - name: DATABASE_USER
-              value: app
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: coral-app
-                  key: password
-            - name: SKIMMER_ITEMS_NUM
-              value: "2000000"
-            - name: SKIMMER_PERMITS_NUM
-              value: "50"
-            - name: SKIMMER_BATCH_SIZE
-              value: "1000"
-          command:
-            - skimmer
-            - items
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "2000m"
-          securityContext:
-            runAsUser: 1000
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-items
+              image: metalwhaledev/newswaters-skimmer:0.1.4
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_ITEMS_NUM
+                  value: "100000"
+                - name: SKIMMER_PERMITS_NUM
+                  value: "50"
+                - name: SKIMMER_BATCH_SIZE
+                  value: "1000"
+              command:
+                - skimmer
+                - items
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "500m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "2000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: CronJob
 metadata:
-  name: skimmer-item-urls-0
-  labels:
-    app: skimmer-item-urls
+  name: skimmer-item-urls
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
-  template:
+  schedule: "10 * * * *"
+  jobTemplate:
     spec:
-      containers:
-        - name: skimmer-item-urls
-          env:
-            - name: SKIMMER_REPLICAS_NUM
-              value: "2"
-            - name: SKIMMER_REPLICA_INDEX
-              value: "0"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: skimmer-item-urls-1
-  labels:
-    app: skimmer-item-urls
-spec:
-  template:
-    spec:
-      containers:
-        - name: skimmer-item-urls
-          env:
-            - name: SKIMMER_REPLICAS_NUM
-              value: "2"
-            - name: SKIMMER_REPLICA_INDEX
-              value: "1"
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-item-urls
+              image: metalwhaledev/newswaters-skimmer:0.1.4
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_ITEMS_NUM
+                  value: "100000"
+                - name: SKIMMER_PERMITS_NUM
+                  value: "10"
+                - name: SKIMMER_BATCH_SIZE
+                  value: "100000"
+              command:
+                - skimmer
+                - item_urls
+              resources:
+                requests:
+                  memory: "4Gi"
+                  cpu: "1000m"
+                limits:
+                  memory: "8Gi"
+                  cpu: "2000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never

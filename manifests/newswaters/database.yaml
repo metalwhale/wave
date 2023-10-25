@@ -4,7 +4,7 @@ kind: Cluster
 metadata:
   name: coral
 spec:
-  instances: 2
+  instances: 3
   storage:
     size: 48Gi
     storageClass: local-storage
