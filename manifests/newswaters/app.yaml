@@ -52,7 +52,10 @@ spec:
     matchLabels:
       app: echolocator
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -61,17 +64,27 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: echolocator
-          image: metalwhaledev/newswaters-echolocator:0.1.0
+          image: metalwhaledev/newswaters-echolocator:0.2.4
           imagePullPolicy: Always
           env:
             - name: ECHOLOCATOR_PORT
               value: "3000"
+            - name: ECHOLOCATOR_THREADS
+              value: "6"
+            - name: ECHOLOCATOR_TEMP
+              value: "0.4"
           command:
-            - /bin/echolocator
+            - echolocator
           resources:
             limits:
               memory: "12Gi"
-              cpu: "4000m"
+              cpu: "6000m"
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            failureThreshold: 30
+            periodSeconds: 60
 ---
 apiVersion: v1
 kind: Service
@@ -95,7 +108,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.2.0
+          image: metalwhaledev/newswaters-skimmer:0.2.2
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -140,7 +153,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.2.0
+              image: metalwhaledev/newswaters-skimmer:0.2.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -192,7 +205,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.2.0
+              image: metalwhaledev/newswaters-skimmer:0.2.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -244,7 +257,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-top-stories
-              image: metalwhaledev/newswaters-skimmer:0.2.0
+              image: metalwhaledev/newswaters-skimmer:0.2.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -269,7 +282,7 @@ spec:
                 - name: SKIMMER_TEXT_MIN_LINE_LENGTH
                   value: "80"
                 - name: SKIMMER_TEXT_MAX_TOTAL_LENGTH
-                  value: "2400"
+                  value: "4800"
               command:
                 - skimmer
                 - consume_top_stories
