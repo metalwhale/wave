@@ -11,5 +11,5 @@ helmCharts:
 
 resources:
   - database.yaml
-  - vector-database.yaml
+  - search-engine.yaml
   - app.yaml
