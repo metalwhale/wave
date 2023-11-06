@@ -108,7 +108,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.3.2
+          image: metalwhaledev/newswaters-skimmer:0.3.3
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -153,7 +153,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.3.2
+              image: metalwhaledev/newswaters-skimmer:0.3.3
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -205,7 +205,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.3.2
+              image: metalwhaledev/newswaters-skimmer:0.3.3
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -257,7 +257,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-top-stories
-              image: metalwhaledev/newswaters-skimmer:0.3.2
+              image: metalwhaledev/newswaters-skimmer:0.3.3
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -296,7 +296,6 @@ spec:
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
-
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -306,7 +305,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   concurrencyPolicy: Replace
-  schedule: "0,30 * * * *"
+  schedule: "15,45 * * * *"
   jobTemplate:
     spec:
       template:
@@ -314,7 +313,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-top-story-summaries
-              image: metalwhaledev/newswaters-skimmer:0.3.2
+              image: metalwhaledev/newswaters-skimmer:0.3.3
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -373,7 +372,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: whistler
-          image: metalwhaledev/newswaters-whistler:0.2.0
+          image: metalwhaledev/newswaters-whistler:0.2.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
