@@ -372,7 +372,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: whistler
-          image: metalwhaledev/newswaters-whistler:0.2.1
+          image: metalwhaledev/newswaters-whistler:0.2.2
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -396,6 +396,8 @@ spec:
               value: "3000"
             - name: WHISTLER_PORT
               value: "3000"
+            - name: WHISTLER_SEARCH_SIMILAR_LEXICAL_WEIGHT
+              value: "0.0" # Disable lexical search
           command:
             - whistler
           resources:
