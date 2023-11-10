@@ -64,7 +64,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: echolocator
-          image: metalwhaledev/newswaters-echolocator:0.3.0
+          image: metalwhaledev/newswaters-echolocator:0.3.1
           imagePullPolicy: Always
           env:
             - name: ECHOLOCATOR_PORT
