@@ -42,7 +42,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: search-engine
-          image: metalwhaledev/newswaters-search-engine:0.2.0
+          image: metalwhaledev/newswaters-search-engine:0.2.1
           imagePullPolicy: Always
           env:
             - name: SEARCH_ENGINE_PORT
@@ -53,8 +53,6 @@ spec:
               value: "6334"
             - name: SEARCH_ENGINE_VECTOR_COLLECTION
               value: "app"
-            - name: SEARCH_ENGINE_VECTOR_SIZE
-              value: "768" # See: https://huggingface.co/jinaai/jina-embeddings-v2-base-en/blob/d411fe9/config.json#L18
             - name: SEARCH_ENGINE_TEXT_STORAGE_PATH
               value: /var/lib/tantivy/storage
           volumeMounts:
