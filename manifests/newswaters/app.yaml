@@ -7,6 +7,7 @@ metadata:
     app: beach
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: beach
@@ -48,6 +49,7 @@ metadata:
     app: echolocator
 spec:
   replicas: 2
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: echolocator
@@ -363,6 +365,7 @@ metadata:
     app: whistler
 spec:
   replicas: 2
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: whistler
