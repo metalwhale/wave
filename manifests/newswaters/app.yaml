@@ -108,7 +108,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.3.3
+          image: metalwhaledev/newswaters-skimmer:0.3.4
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -153,7 +153,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.3.3
+              image: metalwhaledev/newswaters-skimmer:0.3.4
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -205,7 +205,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.3.3
+              image: metalwhaledev/newswaters-skimmer:0.3.4
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -257,7 +257,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-top-stories
-              image: metalwhaledev/newswaters-skimmer:0.3.3
+              image: metalwhaledev/newswaters-skimmer:0.3.4
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -313,7 +313,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-top-story-summaries
-              image: metalwhaledev/newswaters-skimmer:0.3.3
+              image: metalwhaledev/newswaters-skimmer:0.3.4
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
