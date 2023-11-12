@@ -110,7 +110,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.4.1
+          image: metalwhaledev/newswaters-skimmer:0.4.2
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -155,7 +155,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.4.1
+              image: metalwhaledev/newswaters-skimmer:0.4.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -190,6 +190,7 @@ spec:
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
+  successfulJobsHistoryLimit: 1
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -207,7 +208,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.4.1
+              image: metalwhaledev/newswaters-skimmer:0.4.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -242,6 +243,7 @@ spec:
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
+  successfulJobsHistoryLimit: 1
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -259,7 +261,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-texts
-              image: metalwhaledev/newswaters-skimmer:0.4.1
+              image: metalwhaledev/newswaters-skimmer:0.4.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -298,6 +300,7 @@ spec:
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
+  successfulJobsHistoryLimit: 1
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -315,7 +318,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-summaries
-              image: metalwhaledev/newswaters-skimmer:0.4.1
+              image: metalwhaledev/newswaters-skimmer:0.4.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -333,6 +336,8 @@ spec:
                   value: search-engine.newswaters.svc
                 - name: SEARCH_ENGINE_PORT
                   value: "3000"
+                - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAME
+                  value: item_summary
                 - name: ECHOLOCATOR_HOST
                   value: echolocator.newswaters.svc
                 - name: ECHOLOCATOR_PORT
@@ -356,6 +361,7 @@ spec:
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
+  successfulJobsHistoryLimit: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -377,7 +383,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: whistler
-          image: metalwhaledev/newswaters-whistler:0.2.4
+          image: metalwhaledev/newswaters-whistler:0.2.5
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -395,6 +401,8 @@ spec:
               value: search-engine.newswaters.svc
             - name: SEARCH_ENGINE_PORT
               value: "3000"
+            - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAME
+              value: item_summary
             - name: ECHOLOCATOR_HOST
               value: echolocator.newswaters.svc
             - name: ECHOLOCATOR_PORT
