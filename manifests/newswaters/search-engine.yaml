@@ -11,18 +11,6 @@ spec:
     requests:
       storage: 4Gi
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: search-engine-text-storage
-spec:
-  storageClassName: local-storage
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 16Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,7 +31,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: search-engine
-          image: metalwhaledev/newswaters-search-engine:0.2.1
+          image: metalwhaledev/newswaters-search-engine:0.2.2
           imagePullPolicy: Always
           env:
             - name: SEARCH_ENGINE_PORT
@@ -54,11 +42,6 @@ spec:
               value: "6334"
             - name: SEARCH_ENGINE_VECTOR_COLLECTION
               value: "app"
-            - name: SEARCH_ENGINE_TEXT_STORAGE_PATH
-              value: /var/lib/tantivy/storage
-          volumeMounts:
-            - mountPath: /var/lib/tantivy/storage
-              name: text-storage
           command:
             - search-engine
           resources:
@@ -86,9 +69,6 @@ spec:
         - name: vector-storage
           persistentVolumeClaim:
             claimName: search-engine-vector-storage
-        - name: text-storage
-          persistentVolumeClaim:
-            claimName: search-engine-text-storage
 ---
 apiVersion: v1
 kind: Service

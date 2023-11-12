@@ -110,7 +110,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.4.0
+          image: metalwhaledev/newswaters-skimmer:0.4.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -155,7 +155,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.4.0
+              image: metalwhaledev/newswaters-skimmer:0.4.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -207,7 +207,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.4.0
+              image: metalwhaledev/newswaters-skimmer:0.4.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -259,7 +259,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-texts
-              image: metalwhaledev/newswaters-skimmer:0.4.0
+              image: metalwhaledev/newswaters-skimmer:0.4.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -315,7 +315,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-consume-summaries
-              image: metalwhaledev/newswaters-skimmer:0.4.0
+              image: metalwhaledev/newswaters-skimmer:0.4.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -377,7 +377,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: whistler
-          image: metalwhaledev/newswaters-whistler:0.2.3
+          image: metalwhaledev/newswaters-whistler:0.2.4
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
