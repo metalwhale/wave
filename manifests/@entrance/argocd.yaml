@@ -4,6 +4,8 @@ kind: Application
 metadata:
   name: kubeflow
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -52,6 +54,8 @@ kind: Application
 metadata:
   name: vault
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -83,6 +87,8 @@ kind: Application
 metadata:
   name: newswaters
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -114,6 +120,8 @@ kind: Application
 metadata:
   name: sandbox
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
