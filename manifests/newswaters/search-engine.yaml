@@ -41,7 +41,7 @@ spec:
             - name: SEARCH_ENGINE_VECTOR_PORT
               value: "6334"
             - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAMES
-              value: item_summary
+              value: item_summary,analysis_keyword
           command:
             - search-engine
           resources:
