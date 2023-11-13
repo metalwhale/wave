@@ -1,0 +1,375 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: skimmer-migration
+spec:
+  template:
+    spec:
+      containers:
+        # See: https://github.com/metalwhale/newswaters
+        - name: skimmer-migration
+          image: metalwhaledev/newswaters-skimmer:0.5.0
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_HOST
+              value: coral-rw.newswaters.svc
+            - name: DATABASE_DB
+              value: app
+            - name: DATABASE_USER
+              value: app
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coral-app
+                  key: password
+            - name: DATABASE_URL
+              value: "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST)/$(DATABASE_DB)"
+          command:
+            - diesel
+            - migration
+            - run
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-collect-items
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-collect-items
+              image: metalwhaledev/newswaters-skimmer:0.5.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_COLLECT_ITEMS_NUM
+                  value: "100000"
+                - name: SKIMMER_PERMITS_NUM
+                  value: "50"
+                - name: SKIMMER_CHUNK_SIZE
+                  value: "1000"
+              command:
+                - skimmer
+                - collect_items
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "500m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "2000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-collect-item-urls
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-collect-item-urls
+              image: metalwhaledev/newswaters-skimmer:0.5.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_COLLECT_ITEM_URLS_NUM
+                  value: "100000"
+                - name: SKIMMER_PERMITS_NUM
+                  value: "10"
+                - name: SKIMMER_CHUNK_SIZE
+                  value: "100000"
+              command:
+                - skimmer
+                - collect_item_urls
+              resources:
+                requests:
+                  memory: "4Gi"
+                  cpu: "1000m"
+                limits:
+                  memory: "8Gi"
+                  cpu: "2000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-summarize-texts
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-summarize-texts
+              image: metalwhaledev/newswaters-skimmer:0.5.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: ECHOLOCATOR_HOST
+                  value: echolocator-primary.newswaters.svc
+                - name: ECHOLOCATOR_PORT
+                  value: "3000"
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_SUMMARIZE_TEXTS_NUM
+                  value: "30"
+              command:
+                - skimmer
+                - summarize_texts
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-embed-summaries
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "0,30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-embed-summaries
+              image: metalwhaledev/newswaters-skimmer:0.5.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: SEARCH_ENGINE_HOST
+                  value: search-engine.newswaters.svc
+                - name: SEARCH_ENGINE_PORT
+                  value: "3000"
+                - name: SEARCH_ENGINE_VECTOR_SUMMARY_COLLECTION_NAME
+                  value: item_summary
+                - name: ECHOLOCATOR_HOST
+                  value: echolocator-primary.newswaters.svc
+                - name: ECHOLOCATOR_PORT
+                  value: "3000"
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_EMBED_SUMMARIES_NUM
+                  value: "1000000"
+                - name: SKIMMER_CHUNK_SIZE
+                  value: "50"
+              command:
+                - skimmer
+                - embed_summaries
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-analyze-texts
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "45 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-analyze-texts
+              image: metalwhaledev/newswaters-skimmer:0.5.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: ECHOLOCATOR_HOST
+                  value: echolocator-secondary.newswaters.svc
+                - name: ECHOLOCATOR_PORT
+                  value: "3000"
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_ANALYZE_TEXTS_NUM
+                  value: "30"
+                - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS
+                  value: "true"
+              command:
+                - skimmer
+                - analyze_texts
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: skimmer-embed-keywords
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "0,30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/newswaters
+            - name: skimmer-embed-keywords
+              image: metalwhaledev/newswaters-skimmer:0.5.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: coral-rw.newswaters.svc
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: coral-app
+                      key: password
+                - name: SEARCH_ENGINE_HOST
+                  value: search-engine.newswaters.svc
+                - name: SEARCH_ENGINE_PORT
+                  value: "3000"
+                - name: SEARCH_ENGINE_VECTOR_KEYWORD_COLLECTION_NAME
+                  value: analysis_keyword
+                - name: ECHOLOCATOR_HOST
+                  value: echolocator-secondary.newswaters.svc
+                - name: ECHOLOCATOR_PORT
+                  value: "3000"
+                - name: SKIMMER_IS_JOB
+                  value: "true"
+                - name: SKIMMER_EMBED_KEYWORDS_NUM
+                  value: "1000000"
+                - name: SKIMMER_CHUNK_SIZE
+                  value: "50"
+              command:
+                - skimmer
+                - embed_keywords
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1

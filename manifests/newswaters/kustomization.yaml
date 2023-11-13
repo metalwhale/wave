@@ -13,3 +13,4 @@ resources:
   - database.yaml
   - search-engine.yaml
   - app.yaml
+  - job.yaml
