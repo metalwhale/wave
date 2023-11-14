@@ -179,7 +179,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: whistler
-          image: metalwhaledev/newswaters-whistler:0.2.5
+          image: metalwhaledev/newswaters-whistler:0.2.6
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -197,8 +197,8 @@ spec:
               value: search-engine.newswaters.svc
             - name: SEARCH_ENGINE_PORT
               value: "3000"
-            - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAME
-              value: analysis_keyword
+            - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAMES
+              value: item_summary,analysis_keyword
             - name: ECHOLOCATOR_HOST
               value: echolocator-primary.newswaters.svc
             - name: ECHOLOCATOR_PORT
