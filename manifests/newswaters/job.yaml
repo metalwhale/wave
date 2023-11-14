@@ -147,7 +147,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-summarize-texts
+  name: skimmer-summarize-and-analyze-texts
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -159,7 +159,7 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-summarize-texts
+            - name: skimmer-summarize-and-analyze-texts
               image: metalwhaledev/newswaters-skimmer:0.5.0
               imagePullPolicy: Always
               env:
@@ -181,12 +181,17 @@ spec:
                 - name: SKIMMER_IS_JOB
                   value: "true"
                 - name: SKIMMER_SUMMARIZE_TEXTS_NUM
+                  value: "15"
+                # - name: SKIMMER_SUMMARIZE_ADDITIONAL_TEXTS
+                #   value: "true"
+                - name: SKIMMER_ANALYZE_TEXTS_NUM
                   value: "30"
-                - name: SKIMMER_SUMMARIZE_ADDITIONAL_TEXTS
+                - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS
                   value: "true"
               command:
-                - skimmer
-                - summarize_texts
+                - /bin/sh
+                - -c
+                - skimmer summarize_texts && skimmer analyze_texts
               resources:
                 requests:
                   memory: "1Gi"
@@ -202,7 +207,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-embed-summaries
+  name: skimmer-embed-summaries-and-keywords
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -214,7 +219,7 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-embed-summaries
+            - name: skimmer-embed-summaries-and-keywords
               image: metalwhaledev/newswaters-skimmer:0.5.0
               imagePullPolicy: Always
               env:
@@ -235,120 +240,6 @@ spec:
                   value: "3000"
                 - name: SEARCH_ENGINE_VECTOR_SUMMARY_COLLECTION_NAME
                   value: item_summary
-                - name: ECHOLOCATOR_HOST
-                  value: echolocator-primary.newswaters.svc
-                - name: ECHOLOCATOR_PORT
-                  value: "3000"
-                - name: SKIMMER_IS_JOB
-                  value: "true"
-                - name: SKIMMER_EMBED_SUMMARIES_NUM
-                  value: "1000000"
-                - name: SKIMMER_CHUNK_SIZE
-                  value: "50"
-              command:
-                - skimmer
-                - embed_summaries
-              resources:
-                requests:
-                  memory: "1Gi"
-                  cpu: "500m"
-                limits:
-                  memory: "2Gi"
-                  cpu: "1000m"
-              securityContext:
-                runAsUser: 1000
-          restartPolicy: Never
-  successfulJobsHistoryLimit: 1
----
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: skimmer-analyze-texts
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  concurrencyPolicy: Replace
-  schedule: "45 * * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-analyze-texts
-              image: metalwhaledev/newswaters-skimmer:0.5.0
-              imagePullPolicy: Always
-              env:
-                - name: DATABASE_HOST
-                  value: coral-rw.newswaters.svc
-                - name: DATABASE_DB
-                  value: app
-                - name: DATABASE_USER
-                  value: app
-                - name: DATABASE_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: coral-app
-                      key: password
-                - name: ECHOLOCATOR_HOST
-                  value: echolocator-secondary.newswaters.svc
-                - name: ECHOLOCATOR_PORT
-                  value: "3000"
-                - name: SKIMMER_IS_JOB
-                  value: "true"
-                - name: SKIMMER_ANALYZE_TEXTS_NUM
-                  value: "30"
-                - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS
-                  value: "true"
-              command:
-                - skimmer
-                - analyze_texts
-              resources:
-                requests:
-                  memory: "1Gi"
-                  cpu: "500m"
-                limits:
-                  memory: "2Gi"
-                  cpu: "1000m"
-              securityContext:
-                runAsUser: 1000
-          restartPolicy: Never
-  successfulJobsHistoryLimit: 1
----
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: skimmer-embed-keywords
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  concurrencyPolicy: Replace
-  schedule: "0,30 * * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-embed-keywords
-              image: metalwhaledev/newswaters-skimmer:0.5.0
-              imagePullPolicy: Always
-              env:
-                - name: DATABASE_HOST
-                  value: coral-rw.newswaters.svc
-                - name: DATABASE_DB
-                  value: app
-                - name: DATABASE_USER
-                  value: app
-                - name: DATABASE_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: coral-app
-                      key: password
-                - name: SEARCH_ENGINE_HOST
-                  value: search-engine.newswaters.svc
-                - name: SEARCH_ENGINE_PORT
-                  value: "3000"
                 - name: SEARCH_ENGINE_VECTOR_KEYWORD_COLLECTION_NAME
                   value: analysis_keyword
                 - name: ECHOLOCATOR_HOST
@@ -357,13 +248,16 @@ spec:
                   value: "3000"
                 - name: SKIMMER_IS_JOB
                   value: "true"
+                - name: SKIMMER_EMBED_SUMMARIES_NUM
+                  value: "1000000"
                 - name: SKIMMER_EMBED_KEYWORDS_NUM
                   value: "1000000"
                 - name: SKIMMER_CHUNK_SIZE
                   value: "50"
               command:
-                - skimmer
-                - embed_keywords
+                - /bin/sh
+                - -c
+                - skimmer embed_summaries && skimmer embed_keywords
               resources:
                 requests:
                   memory: "1Gi"
