@@ -9,7 +9,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.5.0
+          image: metalwhaledev/newswaters-skimmer:0.5.2
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -54,7 +54,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.5.0
+              image: metalwhaledev/newswaters-skimmer:0.5.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -107,7 +107,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.5.0
+              image: metalwhaledev/newswaters-skimmer:0.5.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -160,7 +160,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-summarize-and-analyze-texts
-              image: metalwhaledev/newswaters-skimmer:0.5.0
+              image: metalwhaledev/newswaters-skimmer:0.5.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -182,11 +182,11 @@ spec:
                   value: "true"
                 - name: SKIMMER_SUMMARIZE_TEXTS_NUM
                   value: "15"
-                # - name: SKIMMER_SUMMARIZE_ADDITIONAL_TEXTS
-                #   value: "true"
                 - name: SKIMMER_ANALYZE_TEXTS_NUM
-                  value: "30"
+                  value: "45"
                 - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS
+                  value: "true"
+                - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS_FOLLOW_SUMMARIES
                   value: "true"
               command:
                 - /bin/sh
@@ -220,7 +220,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-embed-summaries-and-keywords
-              image: metalwhaledev/newswaters-skimmer:0.5.0
+              image: metalwhaledev/newswaters-skimmer:0.5.2
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
