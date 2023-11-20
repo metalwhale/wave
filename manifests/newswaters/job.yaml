@@ -9,7 +9,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.5.2
+          image: metalwhaledev/newswaters-skimmer:0.6.0
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -54,7 +54,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.5.2
+              image: metalwhaledev/newswaters-skimmer:0.6.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -107,7 +107,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.5.2
+              image: metalwhaledev/newswaters-skimmer:0.6.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -147,7 +147,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-summarize-and-analyze-texts
+  name: skimmer-summarize-and-analyze
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -159,8 +159,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-summarize-and-analyze-texts
-              image: metalwhaledev/newswaters-skimmer:0.5.2
+            - name: skimmer-summarize-and-analyze
+              image: metalwhaledev/newswaters-skimmer:0.6.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -183,15 +183,15 @@ spec:
                 - name: SKIMMER_SUMMARIZE_TEXTS_NUM
                   value: "15"
                 - name: SKIMMER_ANALYZE_TEXTS_NUM
+                  value: "15"
+                - name: SKIMMER_ANALYZE_SUMMARIES_NUM
                   value: "45"
-                - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS
-                  value: "true"
-                - name: SKIMMER_ANALYZE_ADDITIONAL_TEXTS_FOLLOW_SUMMARIES
+                - name: SKIMMER_ANALYZE_ADDITIONAL_SUMMARIES
                   value: "true"
               command:
                 - /bin/sh
                 - -c
-                - skimmer summarize_texts && skimmer analyze_texts
+                - skimmer summarize_texts && skimmer analyze_texts && skimmer analyze_summaries
               resources:
                 requests:
                   memory: "1Gi"
@@ -207,7 +207,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-embed-summaries-and-keywords
+  name: skimmer-embed
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -219,8 +219,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-embed-summaries-and-keywords
-              image: metalwhaledev/newswaters-skimmer:0.5.2
+            - name: skimmer-embed
+              image: metalwhaledev/newswaters-skimmer:0.6.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
