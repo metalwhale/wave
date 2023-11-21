@@ -9,7 +9,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.6.0
+          image: metalwhaledev/newswaters-skimmer:0.6.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -54,7 +54,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.6.0
+              image: metalwhaledev/newswaters-skimmer:0.6.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -107,7 +107,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.6.0
+              image: metalwhaledev/newswaters-skimmer:0.6.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -160,7 +160,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-summarize-and-analyze
-              image: metalwhaledev/newswaters-skimmer:0.6.0
+              image: metalwhaledev/newswaters-skimmer:0.6.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -188,6 +188,8 @@ spec:
                   value: "45"
                 - name: SKIMMER_ANALYZE_ADDITIONAL_SUMMARIES
                   value: "true"
+                - name: SKIMMER_INSTRUCT_SUMMARY_QUERY_MAX_WORDS_COUNT
+                  value: "5"
               command:
                 - /bin/sh
                 - -c
@@ -220,7 +222,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: skimmer-embed
-              image: metalwhaledev/newswaters-skimmer:0.6.0
+              image: metalwhaledev/newswaters-skimmer:0.6.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
