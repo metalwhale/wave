@@ -44,15 +44,15 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: echolocator-primary
+  name: inference-primary
   labels:
-    app: echolocator-primary
+    app: inference-primary
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: echolocator-primary
+      app: inference-primary
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -61,22 +61,22 @@ spec:
   template:
     metadata:
       labels:
-        app: echolocator-primary
+        app: inference-primary
     spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
-        - name: echolocator
-          image: metalwhaledev/newswaters-echolocator:0.3.2
+        - name: inference
+          image: metalwhaledev/newswaters-inference:0.1.0
           imagePullPolicy: Always
           env:
-            - name: ECHOLOCATOR_PORT
+            - name: INFERENCE_PORT
               value: "3000"
-            - name: ECHOLOCATOR_THREADS
+            - name: INFERENCE_THREADS
               value: "6"
-            - name: ECHOLOCATOR_TEMP
+            - name: INFERENCE_TEMP
               value: "0.4"
           command:
-            - echolocator
+            - newswaters-inference
           resources:
             limits:
               memory: "12Gi"
@@ -91,27 +91,27 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: echolocator-primary
+  name: inference-primary
 spec:
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
   selector:
-    app: echolocator-primary
+    app: inference-primary
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: echolocator-secondary
+  name: inference-secondary
   labels:
-    app: echolocator-secondary
+    app: inference-secondary
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: echolocator-secondary
+      app: inference-secondary
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -120,22 +120,22 @@ spec:
   template:
     metadata:
       labels:
-        app: echolocator-secondary
+        app: inference-secondary
     spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
-        - name: echolocator
-          image: metalwhaledev/newswaters-echolocator:0.3.2
+        - name: inference
+          image: metalwhaledev/newswaters-inference:0.1.0
           imagePullPolicy: Always
           env:
-            - name: ECHOLOCATOR_PORT
+            - name: INFERENCE_PORT
               value: "3000"
-            - name: ECHOLOCATOR_THREADS
+            - name: INFERENCE_THREADS
               value: "6"
-            - name: ECHOLOCATOR_TEMP
+            - name: INFERENCE_TEMP
               value: "0.4"
           command:
-            - echolocator
+            - newswaters-inference
           resources:
             limits:
               memory: "12Gi"
@@ -150,36 +150,36 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: echolocator-secondary
+  name: inference-secondary
 spec:
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
   selector:
-    app: echolocator-secondary
+    app: inference-secondary
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: whistler
+  name: api
   labels:
-    app: whistler
+    app: api
 spec:
   replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: whistler
+      app: api
   template:
     metadata:
       labels:
-        app: whistler
+        app: api
     spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
-        - name: whistler
-          image: metalwhaledev/newswaters-whistler:0.2.6
+        - name: api
+          image: metalwhaledev/newswaters-api:0.1.0
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -199,14 +199,14 @@ spec:
               value: "3000"
             - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAMES
               value: item_summary,analysis_keyword
-            - name: ECHOLOCATOR_HOST
-              value: echolocator-primary.newswaters.svc
-            - name: ECHOLOCATOR_PORT
+            - name: INFERENCE_HOST
+              value: inference-primary.newswaters.svc
+            - name: INFERENCE_PORT
               value: "3000"
-            - name: WHISTLER_PORT
+            - name: API_PORT
               value: "3000"
           command:
-            - whistler
+            - newswaters-api
           resources:
             limits:
               memory: "256Mi"
@@ -220,19 +220,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: whistler
+  name: api
 spec:
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
   selector:
-    app: whistler
+    app: api
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: whistler-ingress
+  name: api-ingress
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -241,10 +241,10 @@ spec:
     - http:
         paths:
           # See: https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target
-          - path: /newswaters-whistler(/|$)(.*)
+          - path: /newswaters-api(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: whistler
+                name: api
                 port:
                   number: 3000

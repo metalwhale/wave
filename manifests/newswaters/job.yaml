@@ -2,14 +2,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: skimmer-migration
+  name: job-migration
 spec:
   template:
     spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
-        - name: skimmer-migration
-          image: metalwhaledev/newswaters-skimmer:0.6.3
+        - name: job-migration
+          image: metalwhaledev/newswaters-job:0.1.0
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -41,7 +41,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-collect-items
+  name: job-collect-items
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -53,8 +53,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-collect-items
-              image: metalwhaledev/newswaters-skimmer:0.6.3
+            - name: job-collect-items
+              image: metalwhaledev/newswaters-job:0.1.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -68,16 +68,14 @@ spec:
                     secretKeyRef:
                       name: coral-app
                       key: password
-                - name: SKIMMER_IS_JOB
-                  value: "true"
-                - name: SKIMMER_COLLECT_ITEMS_NUM
+                - name: JOB_COLLECT_ITEMS_NUM
                   value: "100000"
-                - name: SKIMMER_PERMITS_NUM
+                - name: JOB_PERMITS_NUM
                   value: "50"
-                - name: SKIMMER_CHUNK_SIZE
+                - name: JOB_CHUNK_SIZE
                   value: "1000"
               command:
-                - skimmer
+                - newswaters-job
                 - collect_items
               resources:
                 requests:
@@ -94,7 +92,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-collect-item-urls
+  name: job-collect-item-urls
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -106,8 +104,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-collect-item-urls
-              image: metalwhaledev/newswaters-skimmer:0.6.3
+            - name: job-collect-item-urls
+              image: metalwhaledev/newswaters-job:0.1.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -121,16 +119,14 @@ spec:
                     secretKeyRef:
                       name: coral-app
                       key: password
-                - name: SKIMMER_IS_JOB
-                  value: "true"
-                - name: SKIMMER_COLLECT_ITEM_URLS_NUM
+                - name: JOB_COLLECT_ITEM_URLS_NUM
                   value: "100000"
-                - name: SKIMMER_PERMITS_NUM
+                - name: JOB_PERMITS_NUM
                   value: "10"
-                - name: SKIMMER_CHUNK_SIZE
+                - name: JOB_CHUNK_SIZE
                   value: "100000"
               command:
-                - skimmer
+                - newswaters-job
                 - collect_item_urls
               resources:
                 requests:
@@ -147,7 +143,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-summarize-and-analyze
+  name: job-summarize-and-analyze
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -159,8 +155,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-summarize-and-analyze
-              image: metalwhaledev/newswaters-skimmer:0.6.3
+            - name: job-summarize-and-analyze
+              image: metalwhaledev/newswaters-job:0.1.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -174,24 +170,22 @@ spec:
                     secretKeyRef:
                       name: coral-app
                       key: password
-                - name: ECHOLOCATOR_HOST
-                  value: echolocator-primary.newswaters.svc
-                - name: ECHOLOCATOR_PORT
+                - name: INFERENCE_HOST
+                  value: inference-primary.newswaters.svc
+                - name: INFERENCE_PORT
                   value: "3000"
-                - name: SKIMMER_IS_JOB
-                  value: "true"
-                - name: SKIMMER_SUMMARIZE_TEXTS_NUM
+                - name: JOB_SUMMARIZE_TEXTS_NUM
                   value: "15"
-                - name: SKIMMER_ANALYZE_TEXTS_NUM
+                - name: JOB_ANALYZE_TEXTS_NUM
                   value: "15"
-                - name: SKIMMER_ANALYZE_SUMMARIES_NUM
+                - name: JOB_ANALYZE_SUMMARIES_NUM
                   value: "45"
-                - name: SKIMMER_ANALYZE_ADDITIONAL_SUMMARIES
+                - name: JOB_ANALYZE_ADDITIONAL_SUMMARIES
                   value: "true"
               command:
                 - /bin/sh
                 - -c
-                - skimmer summarize_texts && skimmer analyze_texts && skimmer analyze_summaries
+                - newswaters-job summarize_texts && newswaters-job analyze_texts && newswaters-job analyze_summaries
               resources:
                 requests:
                   memory: "1Gi"
@@ -207,7 +201,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: skimmer-embed
+  name: job-embed
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -219,8 +213,8 @@ spec:
         spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
-            - name: skimmer-embed
-              image: metalwhaledev/newswaters-skimmer:0.6.3
+            - name: job-embed
+              image: metalwhaledev/newswaters-job:0.1.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -242,22 +236,20 @@ spec:
                   value: item_summary
                 - name: SEARCH_ENGINE_VECTOR_KEYWORD_COLLECTION_NAME
                   value: analysis_keyword
-                - name: ECHOLOCATOR_HOST
-                  value: echolocator-secondary.newswaters.svc
-                - name: ECHOLOCATOR_PORT
+                - name: INFERENCE_HOST
+                  value: inference-secondary.newswaters.svc
+                - name: INFERENCE_PORT
                   value: "3000"
-                - name: SKIMMER_IS_JOB
-                  value: "true"
-                - name: SKIMMER_EMBED_SUMMARIES_NUM
+                - name: JOB_EMBED_SUMMARIES_NUM
                   value: "1000000"
-                - name: SKIMMER_EMBED_KEYWORDS_NUM
+                - name: JOB_EMBED_KEYWORDS_NUM
                   value: "1000000"
-                - name: SKIMMER_CHUNK_SIZE
+                - name: JOB_CHUNK_SIZE
                   value: "50"
               command:
                 - /bin/sh
                 - -c
-                - skimmer embed_summaries && skimmer embed_keywords
+                - newswaters-job embed_summaries && newswaters-job embed_keywords
               resources:
                 requests:
                   memory: "1Gi"

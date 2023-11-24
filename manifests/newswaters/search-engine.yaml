@@ -31,7 +31,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: search-engine
-          image: metalwhaledev/newswaters-search-engine:0.3.0
+          image: metalwhaledev/newswaters-search-engine:0.1.0
           imagePullPolicy: Always
           env:
             - name: SEARCH_ENGINE_PORT
@@ -43,7 +43,7 @@ spec:
             - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAMES
               value: item_summary,analysis_keyword
           command:
-            - search-engine
+            - newswaters-search-engine
           resources:
             limits:
               memory: "256Mi"
