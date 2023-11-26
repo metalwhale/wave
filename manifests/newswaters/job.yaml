@@ -9,7 +9,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: job-migration
-          image: metalwhaledev/newswaters-job:0.1.0
+          image: metalwhaledev/newswaters-job:0.1.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -54,7 +54,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-collect-items
-              image: metalwhaledev/newswaters-job:0.1.0
+              image: metalwhaledev/newswaters-job:0.1.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -105,7 +105,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-collect-item-urls
-              image: metalwhaledev/newswaters-job:0.1.0
+              image: metalwhaledev/newswaters-job:0.1.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -156,7 +156,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-summarize-and-analyze
-              image: metalwhaledev/newswaters-job:0.1.0
+              image: metalwhaledev/newswaters-job:0.1.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -182,6 +182,8 @@ spec:
                   value: "45"
                 - name: JOB_ANALYZE_ADDITIONAL_SUMMARIES
                   value: "true"
+                - name: JOB_INSTRUCT_RANDOM_QUERY_WORDS_RETENTION_RATE
+                  value: "0.1"
               command:
                 - /bin/sh
                 - -c
@@ -214,7 +216,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-embed
-              image: metalwhaledev/newswaters-job:0.1.0
+              image: metalwhaledev/newswaters-job:0.1.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
