@@ -140,65 +140,69 @@ spec:
           restartPolicy: Never
   successfulJobsHistoryLimit: 1
 ---
-apiVersion: batch/v1
-kind: CronJob
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: job-summarize-and-analyze
+  labels:
+    app: job-summarize-and-analyze
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  concurrencyPolicy: Replace
-  schedule: "15 * * * *"
-  jobTemplate:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: job-summarize-and-analyze
+  template:
+    metadata:
+      labels:
+        app: job-summarize-and-analyze
     spec:
-      template:
-        spec:
-          containers:
-            # See: https://github.com/metalwhale/newswaters
-            - name: job-summarize-and-analyze
-              image: metalwhaledev/newswaters-job:0.1.1
-              imagePullPolicy: Always
-              env:
-                - name: DATABASE_HOST
-                  value: coral-rw.newswaters.svc
-                - name: DATABASE_DB
-                  value: app
-                - name: DATABASE_USER
-                  value: app
-                - name: DATABASE_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: coral-app
-                      key: password
-                - name: INFERENCE_HOST
-                  value: inference-primary.newswaters.svc
-                - name: INFERENCE_PORT
-                  value: "3000"
-                - name: JOB_SUMMARIZE_TEXTS_NUM
-                  value: "15"
-                - name: JOB_ANALYZE_TEXTS_NUM
-                  value: "15"
-                - name: JOB_ANALYZE_SUMMARIES_NUM
-                  value: "45"
-                - name: JOB_ANALYZE_ADDITIONAL_SUMMARIES
-                  value: "true"
-                - name: JOB_INSTRUCT_RANDOM_QUERY_WORDS_RETENTION_RATE
-                  value: "0.1"
-              command:
-                - /bin/sh
-                - -c
-                - newswaters-job summarize_texts && newswaters-job analyze_texts && newswaters-job analyze_summaries
-              resources:
-                requests:
-                  memory: "1Gi"
-                  cpu: "500m"
-                limits:
-                  memory: "2Gi"
-                  cpu: "1000m"
-              securityContext:
-                runAsUser: 1000
-          restartPolicy: Never
-  successfulJobsHistoryLimit: 1
+      containers:
+        # See: https://github.com/metalwhale/newswaters
+        - name: job-summarize-and-analyze
+          image: metalwhaledev/newswaters-job:0.1.1
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_HOST
+              value: coral-rw.newswaters.svc
+            - name: DATABASE_DB
+              value: app
+            - name: DATABASE_USER
+              value: app
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coral-app
+                  key: password
+            - name: INFERENCE_HOST
+              value: inference-primary.newswaters.svc
+            - name: INFERENCE_PORT
+              value: "3000"
+            - name: JOB_SUMMARIZE_TEXTS_NUM
+              value: "15"
+            - name: JOB_ANALYZE_TEXTS_NUM
+              value: "15"
+            - name: JOB_ANALYZE_SUMMARIES_NUM
+              value: "45"
+            - name: JOB_ANALYZE_ADDITIONAL_SUMMARIES
+              value: "true"
+            - name: JOB_INSTRUCT_RANDOM_QUERY_WORDS_RETENTION_RATE
+              value: "0.1"
+          command:
+            - /bin/sh
+            - -c
+            - newswaters-job summarize_texts && newswaters-job analyze_texts && newswaters-job analyze_summaries
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          securityContext:
+            runAsUser: 1000
 ---
 apiVersion: batch/v1
 kind: CronJob
