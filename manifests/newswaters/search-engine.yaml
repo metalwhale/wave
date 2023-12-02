@@ -23,6 +23,11 @@ spec:
   selector:
     matchLabels:
       app: search-engine
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -41,7 +46,7 @@ spec:
             - name: SEARCH_ENGINE_VECTOR_PORT
               value: "6334"
             - name: SEARCH_ENGINE_VECTOR_COLLECTION_NAMES
-              value: item_summary,analysis_keyword
+              value: item_summary
           command:
             - newswaters-search-engine
           resources:

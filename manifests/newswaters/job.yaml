@@ -182,8 +182,6 @@ spec:
               value: "3000"
             - name: JOB_SUMMARIZE_TEXTS_NUM
               value: "15"
-            - name: JOB_ANALYZE_STORY_TEXTS_NUM
-              value: "15"
             - name: JOB_ANALYZE_COMMENT_TEXTS_NUM
               value: "30"
             - name: JOB_INSTRUCT_RANDOM_PASSAGE_WORDS_RETENTION_RATE
@@ -191,7 +189,9 @@ spec:
           command:
             - /bin/sh
             - -c
-            - newswaters-job summarize_texts && newswaters-job analyze_story_texts && newswaters-job analyze_comment_texts
+            - >
+              newswaters-job summarize_texts &&
+              newswaters-job analyze_comment_texts
           resources:
             requests:
               memory: "1Gi"
@@ -238,22 +238,18 @@ spec:
                   value: "3000"
                 - name: SEARCH_ENGINE_VECTOR_SUMMARY_COLLECTION_NAME
                   value: item_summary
-                - name: SEARCH_ENGINE_VECTOR_KEYWORD_COLLECTION_NAME
-                  value: analysis_keyword
                 - name: INFERENCE_HOST
                   value: inference-secondary.newswaters.svc
                 - name: INFERENCE_PORT
                   value: "3000"
                 - name: JOB_EMBED_SUMMARIES_NUM
                   value: "1000000"
-                - name: JOB_EMBED_KEYWORDS_NUM
-                  value: "1000000"
                 - name: JOB_CHUNK_SIZE
                   value: "50"
               command:
                 - /bin/sh
                 - -c
-                - newswaters-job embed_summaries && newswaters-job embed_keywords
+                - newswaters-job embed_summaries
               resources:
                 requests:
                   memory: "1Gi"
