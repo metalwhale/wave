@@ -9,7 +9,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: job-migration
-          image: metalwhaledev/newswaters-job:0.2.0
+          image: metalwhaledev/newswaters-job:0.3.0
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -54,7 +54,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-collect-items
-              image: metalwhaledev/newswaters-job:0.2.0
+              image: metalwhaledev/newswaters-job:0.3.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -76,7 +76,7 @@ spec:
                   value: "1000"
               command:
                 - newswaters-job
-                - collect_items
+                - collect-items
               resources:
                 requests:
                   memory: "256Mi"
@@ -105,7 +105,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-collect-item-urls
-              image: metalwhaledev/newswaters-job:0.2.0
+              image: metalwhaledev/newswaters-job:0.3.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -127,7 +127,7 @@ spec:
                   value: "100000"
               command:
                 - newswaters-job
-                - collect_item_urls
+                - collect-item-urls
               resources:
                 requests:
                   memory: "4Gi"
@@ -162,7 +162,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: job-summarize-and-analyze
-          image: metalwhaledev/newswaters-job:0.2.0
+          image: metalwhaledev/newswaters-job:0.3.0
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -182,6 +182,8 @@ spec:
               value: "3000"
             - name: JOB_SUMMARIZE_TEXTS_NUM
               value: "15"
+            - name: JOB_ANALYZE_SUMMARIES_NUM
+              value: "15"
             - name: JOB_ANALYZE_COMMENT_TEXTS_NUM
               value: "30"
             - name: JOB_INSTRUCT_RANDOM_PASSAGE_WORDS_RETENTION_RATE
@@ -190,8 +192,9 @@ spec:
             - /bin/sh
             - -c
             - >
-              newswaters-job summarize_texts &&
-              newswaters-job analyze_comment_texts
+              newswaters-job summarize-texts &&
+              newswaters-job analyze-summaries &&
+              newswaters-job analyze-comment-texts
           resources:
             requests:
               memory: "1Gi"
@@ -218,7 +221,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-embed
-              image: metalwhaledev/newswaters-job:0.2.0
+              image: metalwhaledev/newswaters-job:0.3.0
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -249,7 +252,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - newswaters-job embed_summaries
+                - newswaters-job embed-summaries
               resources:
                 requests:
                   memory: "1Gi"
