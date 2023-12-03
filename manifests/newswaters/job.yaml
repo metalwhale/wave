@@ -9,7 +9,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: job-migration
-          image: metalwhaledev/newswaters-job:0.3.0
+          image: metalwhaledev/newswaters-job:0.3.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -54,7 +54,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-collect-items
-              image: metalwhaledev/newswaters-job:0.3.0
+              image: metalwhaledev/newswaters-job:0.3.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -105,7 +105,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-collect-item-urls
-              image: metalwhaledev/newswaters-job:0.3.0
+              image: metalwhaledev/newswaters-job:0.3.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
@@ -162,7 +162,7 @@ spec:
       containers:
         # See: https://github.com/metalwhale/newswaters
         - name: job-summarize-and-analyze
-          image: metalwhaledev/newswaters-job:0.3.0
+          image: metalwhaledev/newswaters-job:0.3.1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -221,7 +221,7 @@ spec:
           containers:
             # See: https://github.com/metalwhale/newswaters
             - name: job-embed
-              image: metalwhaledev/newswaters-job:0.3.0
+              image: metalwhaledev/newswaters-job:0.3.1
               imagePullPolicy: Always
               env:
                 - name: DATABASE_HOST
