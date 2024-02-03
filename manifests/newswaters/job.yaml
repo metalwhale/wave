@@ -31,11 +31,11 @@ spec:
             - run
           resources:
             requests:
+              memory: "128Mi"
+              cpu: "125m"
+            limits:
               memory: "256Mi"
               cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
       restartPolicy: OnFailure
 ---
 apiVersion: batch/v1
@@ -79,11 +79,11 @@ spec:
                 - collect-items
               resources:
                 requests:
-                  memory: "256Mi"
-                  cpu: "500m"
+                  memory: "128Mi"
+                  cpu: "125m"
                 limits:
-                  memory: "1Gi"
-                  cpu: "2000m"
+                  memory: "256Mi"
+                  cpu: "250m"
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
@@ -130,11 +130,11 @@ spec:
                 - collect-item-urls
               resources:
                 requests:
+                  memory: "2Gi"
+                  cpu: "500m"
+                limits:
                   memory: "4Gi"
                   cpu: "1000m"
-                limits:
-                  memory: "8Gi"
-                  cpu: "2000m"
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
@@ -197,11 +197,11 @@ spec:
               newswaters-job analyze-comment-texts
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "256Mi"
+              cpu: "250m"
             limits:
-              memory: "2Gi"
-              cpu: "1000m"
+              memory: "512Mi"
+              cpu: "500m"
           securityContext:
             runAsUser: 1000
 ---
@@ -255,11 +255,11 @@ spec:
                 - newswaters-job embed-summaries
               resources:
                 requests:
-                  memory: "1Gi"
-                  cpu: "500m"
+                  memory: "256Mi"
+                  cpu: "250m"
                 limits:
-                  memory: "2Gi"
-                  cpu: "1000m"
+                  memory: "512Mi"
+                  cpu: "500m"
               securityContext:
                 runAsUser: 1000
           restartPolicy: Never
