@@ -177,7 +177,7 @@ spec:
                   name: coral-app
                   key: password
             - name: INFERENCE_HOST
-              value: inference-primary.newswaters.svc
+              value: inference.newswaters.svc
             - name: INFERENCE_PORT
               value: "3000"
             - name: JOB_SUMMARIZE_TEXTS_NUM
@@ -242,7 +242,7 @@ spec:
                 - name: SEARCH_ENGINE_VECTOR_SUMMARY_COLLECTION_NAME
                   value: item_summary
                 - name: INFERENCE_HOST
-                  value: inference-secondary.newswaters.svc
+                  value: inference.newswaters.svc
                 - name: INFERENCE_PORT
                   value: "3000"
                 - name: JOB_EMBED_SUMMARIES_NUM
