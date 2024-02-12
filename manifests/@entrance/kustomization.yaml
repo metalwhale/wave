@@ -5,3 +5,4 @@ resources:
   - ./argocd.yaml
   - ./dashboard.yaml
   - ./ingress.yaml
+  - ./storage.yaml

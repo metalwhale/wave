@@ -1,0 +1,11 @@
+---
+# See: https://github.com/kubernetes-sigs/kubespray/blob/v2.23.0/roles/kubernetes-apps/external_provisioner/local_volume_provisioner/templates/local-volume-provisioner-sc.yml.j2
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
