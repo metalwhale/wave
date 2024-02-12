@@ -3,9 +3,9 @@
 ########################################
 deployKF_helpers:
   deploykf_profiles:
-    users_id_mapping: {"user-1":{"email":"user1@example.com","id":"user-1"},"user-2":{"email":"user2@example.com","id":"user-2"}}
-    profiles_users_access_mapping: {"team-1":{"user-1":{"notebooksAccess":true,"role":"edit"},"user-2":{"notebooksAccess":true,"role":"edit"}},"team-1-prod":{"user-1":{"notebooksAccess":false,"role":"view"},"user-2":{"notebooksAccess":false,"role":"view"}}}
-    users_profiles_access_mapping: {"user-1":{"team-1":{"notebooksAccess":true,"role":"edit"},"team-1-prod":{"notebooksAccess":false,"role":"view"}},"user-2":{"team-1":{"notebooksAccess":true,"role":"edit"},"team-1-prod":{"notebooksAccess":false,"role":"view"}}}
+    users_id_mapping: {"dolphin":{"email":"dolphin@metalwhale.dev","id":"dolphin"},"orca":{"email":"orca@metalwhale.dev","id":"orca"},"whale":{"email":"whale@metalwhale.dev","id":"whale"}}
+    profiles_users_access_mapping: {"whirlpool-weather-forecast-prod":{"dolphin":{"notebooksAccess":true,"role":"edit"}},"whirlpool-weather-forecast-stg":{"dolphin":{"notebooksAccess":false,"role":"view"}}}
+    users_profiles_access_mapping: {"dolphin":{"whirlpool-weather-forecast-prod":{"notebooksAccess":true,"role":"edit"},"whirlpool-weather-forecast-stg":{"notebooksAccess":false,"role":"view"}}}
 
   kubeflow:
     pipelines:
@@ -110,14 +110,14 @@ profileDefaults:
 ## user entities
 ##  - a list of users that can be referenced when defining profile members
 ##
-users: [{"email":"user1@example.com","id":"user-1"},{"email":"user2@example.com","id":"user-2"}]
+users: [{"email":"whale@metalwhale.dev","id":"whale"},{"email":"orca@metalwhale.dev","id":"orca"},{"email":"dolphin@metalwhale.dev","id":"dolphin"}]
 
 ## group entities
 ##  - a list of groups that can be referenced when defining profile members
 ##
-groups: [{"id":"team-1","users":["user-1","user-2"]}]
+groups: [{"id":"weather-forecast","users":["dolphin"]}]
 
 ## profile definitions
 ##  - a list of profile definitions to be generated
 ##
-profiles: [{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"team-1"}],"name":"team-1"},{"members":[{"access":{"notebooksAccess":false,"role":"view"},"group":"team-1"}],"name":"team-1-prod"}]
+profiles: [{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"weather-forecast"}],"name":"whirlpool-weather-forecast-prod"},{"members":[{"access":{"notebooksAccess":false,"role":"view"},"group":"weather-forecast"}],"name":"whirlpool-weather-forecast-stg"}]
