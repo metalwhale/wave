@@ -1,0 +1,128 @@
+########################################
+## SHARED | deploykf
+########################################
+deployKF:
+  extraManifests:
+
+  clusterDomain: cluster.local
+
+  kubeflow:
+    useridHeader: kubeflow-userid
+
+  gateway:
+    namespace: "deploykf-istio-gateway"
+    serviceAccount: "deploykf-gateway"
+    name: "deploykf-gateway"
+    hostname: "deploykf.example.com"
+
+
+########################################
+## COMPONENT | central-dashboard
+########################################
+centralDashboard:
+  image:
+    repository: "ghcr.io/deploykf/dashboard"
+    tag: "0.1.0"
+    pullPolicy: "IfNotPresent"
+    pullSecret: ""
+    uid: 0
+    gid: 0
+
+  ## resource requests/limits for the central-dashboard Pods
+  ## - spec for ResourceRequirements:
+  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
+  ##
+  resources: {}
+
+  ## the value of `REGISTRATION_FLOW` environment variable for central-dashboard
+  ##
+  registrationFlow: false
+
+  ## configs central-dashboard navigation
+  ##
+  navigation:
+
+    ## menu links that appear in the sidebar
+    ##
+    menuLinks:
+
+    ## external links that appear in the sidebar
+    ##
+    externalLinks:
+
+    ## quick action links that appear in the home page
+    ##
+    quickLinks:
+
+    ## documentation links that appear in the home page
+    ##
+    documentationItems:
+      - text: "deployKF Website"
+        desc: "The tool that deployed your ML platform!"
+        link: "https://github.com/deployKF/deployKF"
+
+
+########################################
+## COMPONENT | profile-controller
+########################################
+profileController:
+  image:
+    repository: "kubeflownotebookswg/profile-controller"
+    tag: "v1.7.0"
+    pullPolicy: "IfNotPresent"
+    pullSecret: ""
+    uid: 0
+    gid: 0
+
+  ## resource requests/limits for the profile-controller Pods
+  ## - spec for ResourceRequirements:
+  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
+  ##
+  resources: {}
+
+  ## the value of `-workload-identity` start argument for profile-controller
+  ##
+  workloadIdentity: ""
+
+  ## a list of labels to set on Profile Namespaces
+  ##
+  ## FORMAT:
+  ## - ADD a Namespace label:    `key: "value"`
+  ## - REMOVE a Namespace label: `key: ""`
+  ##
+  ## WARNING:
+  ## - The controller will NOT overwrite a label if one with same key already exists.
+  ## - To override the value of a previously applied label:
+  ##    1. REMOVE the label: `key: ""`
+  ##    2. Apply new ConfigMap
+  ##    3. RE-ADD the label: `key: "value"`
+  ##    4. Apply new ConfigMap
+  ##
+  namespaceLabels:
+    app.kubernetes.io/part-of: "kubeflow-profile"
+    katib.kubeflow.org/metrics-collector-injection: "enabled"
+    pipelines.kubeflow.org/enabled: "true"
+    serving.kubeflow.org/inferenceservice: "enabled"
+
+
+########################################
+## COMPONENT | kfam-api
+########################################
+kfamAPI:
+  image:
+    repository: "kubeflownotebookswg/kfam"
+    tag: "v1.7.0"
+    pullPolicy: "IfNotPresent"
+    pullSecret: ""
+    uid: 0
+    gid: 0
+
+  ## resource requests/limits for the kfam-api Pods
+  ## - spec for ResourceRequirements:
+  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
+  ##
+  resources: {}
+
+  ## the value of `-cluster-admin` start argument for kfam-api
+  ##
+  adminEmail: ""

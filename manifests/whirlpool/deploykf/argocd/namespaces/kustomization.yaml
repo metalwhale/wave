@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonAnnotations:
+  ## NOTE: this ensures Namespaces are not deleted or pruned by ArgoCD (users can still delete them manually)
+  argocd.argoproj.io/sync-options: Delete=false,Prune=false
+resources:
+  ###########################
+  ## deploykf-dependencies ##
+  ###########################
+  - deploykf-dependencies/cert-manager.yaml
+  - deploykf-dependencies/istio.yaml
+  - deploykf-dependencies/kyverno.yaml
+
+  ###################
+  ## deploykf-core ##
+  ###################
+  - deploykf-core/deploykf-auth.yaml
+  - deploykf-core/deploykf-dashboard.yaml
+  - deploykf-core/deploykf-istio-gateway.yaml
+
+  ##################
+  ## deploykf-opt ##
+  ##################
+
+  ####################
+  ## deploykf-tools ##
+  ####################
+  ## TODO: add 'deploykf-tools' https://www.deploykf.org/reference/future-tools/
+
+  ###########################
+  ## kubeflow-dependencies ##
+  ###########################
+
+  ####################
+  ## kubeflow-tools ##
+  ####################

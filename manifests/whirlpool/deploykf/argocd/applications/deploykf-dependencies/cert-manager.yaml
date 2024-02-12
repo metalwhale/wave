@@ -1,0 +1,37 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dkf-dep--cert-manager
+  namespace: "argocd"
+  annotations:
+    ## applications in 'deploykf-dependencies' come first
+    ## NOTE: in this group, each application has a separate wave to avoid conflicts due to webhooks
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/component: deploykf-dependencies
+    app.kubernetes.io/part-of: "deploykf"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: "default"
+  source:
+    repoURL: "https://github.com/metalwhale/wave"
+    targetRevision: "main"
+    path: "manifests/whirlpool/deploykf/manifests/deploykf-dependencies/cert-manager"
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+        - values-overrides.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: "cert-manager"
+  syncPolicy:
+    ## retry is needed because cert-manager can take time to generate certificates
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 6m

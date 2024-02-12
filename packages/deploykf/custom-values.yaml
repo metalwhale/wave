@@ -1,0 +1,14 @@
+argocd:
+  source:
+    repo:
+      url: https://github.com/metalwhale/wave
+      revision: main
+      path: ./manifests/whirlpool/deploykf
+# See: https://www.deploykf.org/guides/getting-started/#kubernetes-configurations
+deploykf_opt:
+  deploykf_minio:
+    persistence:
+      storageClass: local-storage
+  deploykf_mysql:
+    persistence:
+      storageClass: local-storage
