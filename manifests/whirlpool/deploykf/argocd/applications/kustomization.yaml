@@ -33,3 +33,5 @@ resources:
   ####################
   ## kubeflow-tools ##
   ####################
+  - kubeflow-tools/notebooks--jupyter-web-app.yaml
+  - kubeflow-tools/notebooks--notebook-controller.yaml

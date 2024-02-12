@@ -45,6 +45,10 @@ centralDashboard:
     ## menu links that appear in the sidebar
     ##
     menuLinks:
+      - type: item
+        text: Notebooks
+        icon: book
+        link: "/jupyter/"
 
     ## external links that appear in the sidebar
     ##
@@ -53,6 +57,9 @@ centralDashboard:
     ## quick action links that appear in the home page
     ##
     quickLinks:
+      - text: Create a new Notebook
+        desc: Kubeflow Notebooks
+        link: "/jupyter/new"
 
     ## documentation links that appear in the home page
     ##
@@ -60,6 +67,9 @@ centralDashboard:
       - text: "deployKF Website"
         desc: "The tool that deployed your ML platform!"
         link: "https://github.com/deployKF/deployKF"
+      - text: Kubeflow Notebooks Documentation
+        desc: Documentation for Kubeflow Notebooks
+        link: https://www.kubeflow.org/docs/components/notebooks/
 
 
 ########################################
