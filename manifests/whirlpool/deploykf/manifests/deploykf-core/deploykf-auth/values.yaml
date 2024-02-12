@@ -3,8 +3,8 @@
 ########################################
 deployKF_helpers:
   deploykf_gateway:
-    http_endpoint: "deploykf.example.com"
-    https_endpoint: "deploykf.example.com"
+    http_endpoint: "deploykf.example.com:8080"
+    https_endpoint: "deploykf.example.com:8443"
     is_self_signed_cert: true
 
   scripts:

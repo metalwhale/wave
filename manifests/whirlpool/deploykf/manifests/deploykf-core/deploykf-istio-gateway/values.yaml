@@ -3,8 +3,8 @@
 ########################################
 deployKF_helpers:
   deploykf_gateway:
-    http_endpoint: "deploykf.example.com"
-    https_endpoint: "deploykf.example.com"
+    http_endpoint: "deploykf.example.com:8080"
+    https_endpoint: "deploykf.example.com:8443"
 
 
 ########################################
@@ -50,8 +50,8 @@ deployKF:
     selectorLabels: {"app":"deploykf-gateway","istio":"deploykf-gateway"}
     hostname: "deploykf.example.com"
     ports:
-      http: 80
-      https: 443
+      http: 8080
+      https: 8443
     tls:
       enabled: true
     enableProxyProtocol: false
@@ -96,13 +96,13 @@ gateway:
         protocol: TCP
         targetPort: 15021
       - name: http
-        port: 80
+        port: 8080
         protocol: TCP
-        targetPort: 80
+        targetPort: 8080
       - name: https
-        port: 443
+        port: 8443
         protocol: TCP
-        targetPort: 443
+        targetPort: 8443
 
   resources:
     requests:
