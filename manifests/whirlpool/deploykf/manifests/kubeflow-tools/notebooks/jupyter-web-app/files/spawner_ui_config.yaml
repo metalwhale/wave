@@ -33,7 +33,8 @@ spawnerFormDefaults:
   imageGroupOne:
     options:
       - kubeflownotebookswg/codeserver-python:v1.7.0
-    value: kubeflownotebookswg/codeserver-python:v1.7.0
+      - metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
+    value: metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
   imageGroupTwo:
     options:
       - kubeflownotebookswg/rstudio-tidyverse:v1.7.0

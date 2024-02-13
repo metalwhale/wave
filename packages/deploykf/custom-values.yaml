@@ -59,3 +59,9 @@ deploykf_core:
 kubeflow_tools:
   notebooks:
     enabled: true
+    spawnerFormDefaults:
+      imageGroupOne:
+        options:
+          - kubeflownotebookswg/codeserver-python:v1.7.0
+          - metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
+        value: metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
