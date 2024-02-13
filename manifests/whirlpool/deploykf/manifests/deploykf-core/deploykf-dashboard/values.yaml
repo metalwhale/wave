@@ -49,6 +49,10 @@ centralDashboard:
         text: Notebooks
         icon: book
         link: "/jupyter/"
+      - type: item
+        text: Volumes
+        icon: device:storage
+        link: "/volumes/"
 
     ## external links that appear in the sidebar
     ##

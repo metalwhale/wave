@@ -65,3 +65,5 @@ kubeflow_tools:
           - kubeflownotebookswg/codeserver-python:v1.7.0
           - metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
         value: metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
+  volumes:
+    enabled: true
