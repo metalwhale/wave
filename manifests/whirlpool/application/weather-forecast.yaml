@@ -10,7 +10,7 @@ spec:
   sourceRepos:
     - https://github.com/metalwhale/wave.git
   destinations:
-    - namespace: whirlpool-weather-forecast # Created by generating profile at /packages/deploykf/custom-values.yaml
+    - namespace: whirlpool-weather-forecast # Created when generating profile at /packages/deploykf/custom-values.yaml
       server: https://kubernetes.default.svc
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -25,7 +25,7 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/whirlpool/projects/weather-forecast
+    path: manifests/whirlpool-weather-forecast
   destination:
     server: https://kubernetes.default.svc
     namespace: whirlpool-weather-forecast
