@@ -35,18 +35,12 @@ deploykf_core:
         users:
           - dolphin
     profiles:
-      - name: whirlpool-weather-forecast-prod
+      - name: weather-forecast
         members:
           - group: weather-forecast
             access:
               role: edit
               notebooksAccess: true
-      - name: whirlpool-weather-forecast-stg
-        members:
-          - group: weather-forecast
-            access:
-              role: view
-              notebooksAccess: false
   deploykf_profiles_generator.profileDefaults.ownerEmail: "whale@metalwhale.dev"
   deploykf_auth:
     dex:
