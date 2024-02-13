@@ -4,8 +4,8 @@
 deployKF_helpers:
   deploykf_profiles:
     users_id_mapping: {"dolphin":{"email":"dolphin@metalwhale.dev","id":"dolphin"},"orca":{"email":"orca@metalwhale.dev","id":"orca"},"whale":{"email":"whale@metalwhale.dev","id":"whale"}}
-    profiles_users_access_mapping: {"weather-forecast":{"dolphin":{"notebooksAccess":true,"role":"edit"}}}
-    users_profiles_access_mapping: {"dolphin":{"weather-forecast":{"notebooksAccess":true,"role":"edit"}}}
+    profiles_users_access_mapping: {"whirlpool-weather-forecast":{"dolphin":{"notebooksAccess":true,"role":"edit"}}}
+    users_profiles_access_mapping: {"dolphin":{"whirlpool-weather-forecast":{"notebooksAccess":true,"role":"edit"}}}
 
   kubeflow:
     pipelines:
@@ -120,4 +120,4 @@ groups: [{"id":"weather-forecast","users":["dolphin"]}]
 ## profile definitions
 ##  - a list of profile definitions to be generated
 ##
-profiles: [{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"weather-forecast"}],"name":"weather-forecast"}]
+profiles: [{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"weather-forecast"}],"name":"whirlpool-weather-forecast"}]

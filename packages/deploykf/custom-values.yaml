@@ -35,7 +35,7 @@ deploykf_core:
         users:
           - dolphin
     profiles:
-      - name: weather-forecast
+      - name: whirlpool-weather-forecast
         members:
           - group: weather-forecast
             access:
