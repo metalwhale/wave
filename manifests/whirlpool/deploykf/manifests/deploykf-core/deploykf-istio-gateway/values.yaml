@@ -3,8 +3,8 @@
 ########################################
 deployKF_helpers:
   deploykf_gateway:
-    http_endpoint: "deploykf.example.com:8080"
-    https_endpoint: "deploykf.example.com:8443"
+    http_endpoint: "whirlpool.wave.m-cloud.dev"
+    https_endpoint: "whirlpool.wave.m-cloud.dev"
 
 
 ########################################
@@ -48,12 +48,12 @@ deployKF:
   gateway:
     name: "deploykf-gateway"
     selectorLabels: {"app":"deploykf-gateway","istio":"deploykf-gateway"}
-    hostname: "deploykf.example.com"
+    hostname: "whirlpool.wave.m-cloud.dev"
     ports:
-      http: 8080
-      https: 8443
+      http: 80
+      https: 443
     tls:
-      enabled: true
+      enabled: false
     enableProxyProtocol: false
     xffNumTrustedHops: 0
     emailToLowercase: false
@@ -96,13 +96,13 @@ gateway:
         protocol: TCP
         targetPort: 15021
       - name: http
-        port: 8080
+        port: 80
         protocol: TCP
-        targetPort: 8080
+        targetPort: 80
       - name: https
-        port: 8443
+        port: 443
         protocol: TCP
-        targetPort: 8443
+        targetPort: 443
 
   resources:
     requests:

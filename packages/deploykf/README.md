@@ -3,7 +3,12 @@ The folder [`../../manifests/whirlpool/deploykf/`](../../manifests/whirlpool/dep
 ```bash
 docker build -t wave-deploykf .
 docker run --rm -it -v ${PWD}/../../manifests/whirlpool/deploykf/:/usr/src/deploykf/ wave-deploykf \
-    deploykf generate --source-version "0.1.3" --values /tmp/custom-values.yaml --output-dir /usr/src/deploykf
+    deploykf generate \
+        --source-version "0.1.3" \
+        --values /tmp/values-argocd.yaml \
+        --values /tmp/values-deploykf.yaml \
+        --values /tmp/values-kubeflow.yaml \
+        --output-dir /usr/src/deploykf
 docker rmi wave-deploykf
 ```
 

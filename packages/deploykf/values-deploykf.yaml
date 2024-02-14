@@ -1,0 +1,57 @@
+deploykf_core:
+  deploykf_istio_gateway:
+    gateway:
+      hostname: whirlpool.wave.m-cloud.dev
+      # OCEAN: the certificate is configured on an nginx server, which stands between this cluster and the internet
+      tls:
+        enabled: false
+  deploykf_profiles_generator:
+    users:
+      - id: whale # admin
+        email: "whale@metalwhale.dev"
+      - id: ziphius # machine
+        email: "ziphius@metalwhale.dev"
+      - id: dolphin
+        email: "dolphin@metalwhale.dev"
+      - id: orca
+        email: "orca@metalwhale.dev"
+    groups:
+      - id: weather-forecast
+        users:
+          - dolphin
+    profiles:
+      - name: whirlpool-weather-forecast
+        members:
+          - group: weather-forecast
+            access:
+              role: edit
+              notebooksAccess: true
+    profileDefaults:
+      ownerEmail: "whale@metalwhale.dev"
+  deploykf_auth:
+    dex:
+      staticPasswords:
+        - email: "whale@metalwhale.dev"
+          password:
+            value: "$2y$10$jYppL1gAPMzrak.bNaMnseZlsH5H7WYXdIZPZunCRQc2sb6A5RFIa"
+            type: "hash"
+        - email: "ziphius@metalwhale.dev"
+          password:
+            value: "$2y$10$roW5cm//sNVTHSUSGaGiR.GDjyBN5THUV/M/Ir0Sslb9DlYT7j8Fq"
+            type: "hash"
+        - email: "dolphin@metalwhale.dev"
+          password:
+            value: "$2y$10$lNkeDskkgFz6uCtMMjXcJutatY6wofU15LKbsL8iaJKYlIq0KRrvG"
+            type: "hash"
+        - email: "orca@metalwhale.dev"
+          password:
+            value: "$2y$10$rXQHUOmDCENkKlijHo/H/u59jbr.dQ/ykKHG65qFrZChn7XYy1S8C"
+            type: "hash"
+# See: https://www.deploykf.org/guides/getting-started/#kubernetes-configurations
+deploykf_opt:
+  deploykf_minio:
+    persistence:
+      storageClass: local-storage
+  deploykf_mysql:
+    persistence:
+      storageClass: local-storage

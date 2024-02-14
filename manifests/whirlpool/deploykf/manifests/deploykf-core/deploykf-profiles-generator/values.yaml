@@ -3,7 +3,7 @@
 ########################################
 deployKF_helpers:
   deploykf_profiles:
-    users_id_mapping: {"dolphin":{"email":"dolphin@metalwhale.dev","id":"dolphin"},"orca":{"email":"orca@metalwhale.dev","id":"orca"},"whale":{"email":"whale@metalwhale.dev","id":"whale"}}
+    users_id_mapping: {"dolphin":{"email":"dolphin@metalwhale.dev","id":"dolphin"},"orca":{"email":"orca@metalwhale.dev","id":"orca"},"whale":{"email":"whale@metalwhale.dev","id":"whale"},"ziphius":{"email":"ziphius@metalwhale.dev","id":"ziphius"}}
     profiles_users_access_mapping: {"whirlpool-weather-forecast":{"dolphin":{"notebooksAccess":true,"role":"edit"}}}
     users_profiles_access_mapping: {"dolphin":{"whirlpool-weather-forecast":{"notebooksAccess":true,"role":"edit"}}}
 
@@ -65,7 +65,7 @@ profileDefaults:
 
   ## the default email to set as the owner of profiles
   ##
-  ownerEmail: "admin@example.com"
+  ownerEmail: "whale@metalwhale.dev"
 
   ## the default access for members of profiles, when not explicitly specified
   ##
@@ -110,7 +110,7 @@ profileDefaults:
 ## user entities
 ##  - a list of users that can be referenced when defining profile members
 ##
-users: [{"email":"whale@metalwhale.dev","id":"whale"},{"email":"orca@metalwhale.dev","id":"orca"},{"email":"dolphin@metalwhale.dev","id":"dolphin"}]
+users: [{"email":"whale@metalwhale.dev","id":"whale"},{"email":"ziphius@metalwhale.dev","id":"ziphius"},{"email":"dolphin@metalwhale.dev","id":"dolphin"},{"email":"orca@metalwhale.dev","id":"orca"}]
 
 ## group entities
 ##  - a list of groups that can be referenced when defining profile members

@@ -13,7 +13,7 @@ deployKF:
     namespace: "deploykf-istio-gateway"
     serviceAccount: "deploykf-gateway"
     name: "deploykf-gateway"
-    hostname: "deploykf.example.com"
+    hostname: "whirlpool.wave.m-cloud.dev"
 
 
 ########################################

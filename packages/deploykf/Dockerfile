@@ -9,4 +9,4 @@ RUN DKF_CLI_VERSION="0.1.2" && \
     curl -fL "https://github.com/deploykf/cli/releases/download/v${DKF_CLI_VERSION}/deploykf-linux-${DKF_CLI_ARCH}" -o "${DFK_CLI_DEST}" && \
     chmod +x "${DFK_CLI_DEST}"
 
-COPY custom-values.yaml /tmp/custom-values.yaml
+COPY *.yaml /tmp/
