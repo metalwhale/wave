@@ -17,4 +17,4 @@ transformers:
 
 resources:
   - ./deploykf/argocd
-  - ./application
+  - ./app

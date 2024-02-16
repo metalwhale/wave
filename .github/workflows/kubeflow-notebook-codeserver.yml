@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - images/kubeflow-notebook-codeserver/**
+      - applications/kubeflow/notebook-codeserver/**
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,6 +17,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: "{{defaultContext}}:images/kubeflow-notebook-codeserver"
+          context: "{{defaultContext}}:applications/kubeflow/notebook-codeserver"
           push: true
           tags: metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
