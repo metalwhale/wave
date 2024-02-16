@@ -50,8 +50,10 @@ deploykf_core:
 # See: https://www.deploykf.org/guides/getting-started/#kubernetes-configurations
 deploykf_opt:
   deploykf_minio:
+    enabled: true
     persistence:
       storageClass: local-storage
   deploykf_mysql:
+    enabled: true
     persistence:
       storageClass: local-storage

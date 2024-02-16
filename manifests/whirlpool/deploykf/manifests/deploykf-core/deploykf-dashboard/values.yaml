@@ -57,6 +57,11 @@ centralDashboard:
     ## external links that appear in the sidebar
     ##
     externalLinks:
+      - type: item
+        iframe: false
+        text: Minio Console
+        icon: cloud
+        link: "http://minio-console.whirlpool.wave.m-cloud.dev"
 
     ## quick action links that appear in the home page
     ##

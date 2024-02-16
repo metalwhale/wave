@@ -59,7 +59,7 @@ deployKF:
     emailToLowercase: false
 
   minio:
-    enabled: false
+    enabled: true
     namespace: "deploykf-minio"
 
 

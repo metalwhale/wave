@@ -24,8 +24,8 @@ deployKF:
       selfSigned:
         injectedConfigMapName: "deploykf-gateway-issuer-root-ca-cert"
 
-  istio:
-    namespace: "istio-system"
+  auth:
+    namespace: "deploykf-auth"
 
   gateway:
     namespace: "deploykf-istio-gateway"
@@ -52,134 +52,120 @@ generate:
 
 
 ########################################
-## COMPONENT | dex
+## COMPONENT | minio
 ########################################
-dex:
-  ## configs for the dex container image
+minio:
+  ## configs for the minio container image
   ##
   image:
-    repository: "ghcr.io/dexidp/dex"
-    tag: "v2.37.0"
+    repository: "docker.io/minio/minio"
+    tag: "RELEASE.2023-08-04T17-40-21Z"
     pullPolicy: "IfNotPresent"
     pullSecret: ""
-    uid: 1001
-    gid: 1001
+    uid: 1000
+    gid: 1000
 
-  ## resource requests/limits for the dex Pods
+  ## configs for the mc container image
+  ##
+  mcImage:
+    repository: "docker.io/minio/mc"
+    tag: "RELEASE.2023-08-01T23-30-57Z"
+    pullPolicy: "IfNotPresent"
+    pullSecret: ""
+    uid: 1000
+    gid: 1000
+
+  ## configs for the kubectl container image
+  ##
+  kubectlImage:
+    repository: "docker.io/bitnami/kubectl"
+    tag: "1.26.6-debian-11-r8"
+    pullPolicy: "IfNotPresent"
+    pullSecret: ""
+    uid: 1000
+    gid: 1000
+
+  ## the securityContext configs for minio Pods
+  ## - spec for PodSecurityContext:
+  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podsecuritycontext-v1-core
+  ##
+  podSecurityContext:
+    ## sets filesystem owner group of in mounted volumes, ensuring pod has permissions to read data
+    fsGroup: 1000
+
+  ## resource requests/limits for the minio Pods
   ## - spec for ResourceRequirements:
   ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
   ##
   resources: {}
 
-  ## log level for the dex container
+  ## persistence configs for minio
   ##
-  logLevel: "info"
+  persistence:
+    enabled: true
 
-  ## configs for token/key expiration
-  ##
-  expiry:
-    deviceRequests: "5m"
-    idTokens: "60m"
-    signingKeys: "6h"
-    refreshTokens:
-      reuseInterval: "30s"
-      validIfNotUsedFor: "168h"
-      absoluteLifetime: "2160h"
-
-  ## OpenID client configs for dex
-  ##
-  clients:
-
-    ## OpenID client for oauth2-proxy
-    ## - [WARNING] these configs must align with `oauth2Proxy.oidc.*`
+    ## the name of an existing PersistentVolumeClaim to use
+    ## - if non-emtpy, you must manually create a PVC with this name
     ##
-    oauth2Proxy:
-      clientId: "oauth2-proxy"
-      clientSecret:
-        value: "bbbbbbbbbbbbbbbb"
-        existingSecret: ""
-        existingSecretKey: "client_secret"
-        generateSecret: false
+    existingClaim: ""
 
-    ## OpenID client for Minio Console
+    ## the sub-path within the PersistentVolume to mount, instead of the root
     ##
-    minioConsole:
-      enabled: true
-      namespace: "deploykf-minio"
+    subPath: ""
+
+    ## the name of the StorageClass requested by the PersistentVolumeClaim
+    ## - if set to "", then `PersistentVolumeClaim/spec.storageClassName` is omitted
+    ## - if set to "-", then `PersistentVolumeClaim/spec.storageClassName` is set to ""
+    ##
+    storageClass: "local-storage"
+
+    ## the access mode of the PersistentVolumeClaim
+    ##
+    accessMode: "ReadWriteOnce"
+
+    ## the initial size for the PersistentVolumeClaim to request
+    ## - if your StorageClass has `allowVolumeExpansion=true`, kubernetes allows the
+    ##   PVC to grow in size as needed, starting from this value
+    ##
+    size: "5Gi"
+
+  ## root user configs for minio
+  ##
+  rootUser:
+    username: "minioadmin"
+    password: "minioadmin"
+    existingSecret: ""
+    existingSecretUsernameKey: "username"
+    existingSecretPasswordKey: "password"
+    generateSecret: false
+
+    ## service accounts for the root user
+    ##  - these service accounts are created and/or updated by a post-install job
+    ##
+    serviceAccounts: []
+
+  ## identity configs for minio
+  ##
+  identity:
+
+    ## OpenID configs for minio
+    ##
+    openid:
+      displayName: "deployKF Auth"
+      policyClaim: "email"
+      scopes: "openid,email,groups,profile,offline_access"
       clientId: "minio-console"
       clientSecret:
         value: "bbbbbbbbbbbbbbbb"
         existingSecret: ""
         existingSecretKey: "client_secret"
-        generateSecret: false
 
-    ## OpenID client for Argo Server
-    ##
-    argoServer:
-      enabled: false
-      namespace: "kubeflow-argo-workflows"
-      clientId: "argo-server"
-      clientSecret:
-        value: "bbbbbbbbbbbbbbbb"
-        existingSecret: ""
-        existingSecretKey: "client_secret"
-        generateSecret: false
-
-    ## OpenID client for Kubeflow Pipelines SDK
-    ##
-    kubeflowPipelinesSDK:
-      enabled: false
-      clientId: "kubeflow-pipelines-sdk"
-
-  ## dex static passwords
+  ## minio buckets
+  ##  - these buckets are created and/or updated by a post-install job
   ##
-  staticPasswords: [{"email":"whale@metalwhale.dev","password":{"type":"hash","value":"$2y$10$jYppL1gAPMzrak.bNaMnseZlsH5H7WYXdIZPZunCRQc2sb6A5RFIa"}},{"email":"ziphius@metalwhale.dev","password":{"type":"hash","value":"$2y$10$roW5cm//sNVTHSUSGaGiR.GDjyBN5THUV/M/Ir0Sslb9DlYT7j8Fq"}},{"email":"dolphin@metalwhale.dev","password":{"type":"hash","value":"$2y$10$lNkeDskkgFz6uCtMMjXcJutatY6wofU15LKbsL8iaJKYlIq0KRrvG"}},{"email":"orca@metalwhale.dev","password":{"type":"hash","value":"$2y$10$rXQHUOmDCENkKlijHo/H/u59jbr.dQ/ykKHG65qFrZChn7XYy1S8C"}}]
+  buckets: []
 
-  ## dex connectors
+  ## minio access policies
+  ##  - these policies are created and/or updated by a post-install job
   ##
-  connectors: []
-
-
-########################################
-## COMPONENT | oauth2-proxy
-########################################
-oauth2Proxy:
-  ## configs for the oauth2-proxy container image
-  ##
-  image:
-    repository: "quay.io/oauth2-proxy/oauth2-proxy"
-    tag: "v7.5.1"
-    pullPolicy: "IfNotPresent"
-    pullSecret: ""
-    uid: 65532
-    gid: 65532
-
-  ## resource requests/limits for the oauth2-proxy Pods
-  ## - spec for ResourceRequirements:
-  ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
-  ##
-  resources: {}
-
-  ## OpenID configs for oauth2-proxy
-  ##
-  oidc:
-    clientId: "oauth2-proxy"
-    clientSecret:
-      value: "bbbbbbbbbbbbbbbb"
-      existingSecret: ""
-      existingSecretKey: "client_secret"
-
-  ## cookie configs for oauth2-proxy
-  ##
-  cookie:
-    name: "_deploykf_token"
-    expire: "168h"
-    refresh: "60m"
-    csrf:
-      expire: "15m"
-      perRequest: true
-    secret:
-      value: "cccccccccccccccc"
-      existingSecret: ""
-      existingSecretKey: "cookie_secret"
-      generateSecret: false
+  policies: []
