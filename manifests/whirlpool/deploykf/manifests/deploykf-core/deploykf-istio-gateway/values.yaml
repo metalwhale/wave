@@ -19,7 +19,7 @@ deployKF:
     namespace: kubeflow
     useridHeader: kubeflow-userid
     pipelines:
-      enabled: false
+      enabled: true
       kfpV2:
         defaultPipelineRoot: "minio://{bucket_name}/v2/artifacts/{profile_name}"
       cache:
@@ -30,7 +30,7 @@ deployKF:
       issuerName: "deploykf-gateway-issuer"
 
   argoWorkflows:
-    enabled: false
+    enabled: true
     namespace: "kubeflow-argo-workflows"
     artifactRepository:
       keyFormat: "artifacts/{{ workflow.namespace }}/{{ workflow.name }}/{{ workflow.creationTimestamp.Y }}/{{ workflow.creationTimestamp.m }}/{{ workflow.creationTimestamp.d }}/{{ pod.name }}"

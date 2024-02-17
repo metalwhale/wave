@@ -28,14 +28,14 @@ deployKF:
     namespace: "deploykf-minio"
 
   argoWorkflows:
-    enabled: false
+    enabled: true
     namespace: "kubeflow-argo-workflows"
 
   kubeflow:
     useridHeader: kubeflow-userid
 
     pipelines:
-      enabled: false
+      enabled: true
       namespace: kubeflow
       pipelineUI:
         namespace: kubeflow

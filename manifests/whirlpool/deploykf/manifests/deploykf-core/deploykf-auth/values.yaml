@@ -116,7 +116,7 @@ dex:
     ## OpenID client for Argo Server
     ##
     argoServer:
-      enabled: false
+      enabled: true
       namespace: "kubeflow-argo-workflows"
       clientId: "argo-server"
       clientSecret:
@@ -128,7 +128,7 @@ dex:
     ## OpenID client for Kubeflow Pipelines SDK
     ##
     kubeflowPipelinesSDK:
-      enabled: false
+      enabled: true
       clientId: "kubeflow-pipelines-sdk"
 
   ## dex static passwords

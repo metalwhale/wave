@@ -109,6 +109,9 @@ mysql:
   ## kubeflow databases to create with the init_file
   ##
   kubeflowDatabases:
+    - name: "kfp_cache"
+    - name: "kfp_metadata"
+    - name: "kfp_pipelines"
 
   ## custom users to create with the init_file
   ##

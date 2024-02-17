@@ -142,7 +142,7 @@ minio:
     ## service accounts for the root user
     ##  - these service accounts are created and/or updated by a post-install job
     ##
-    serviceAccounts: []
+    serviceAccounts: [{"existingSecret":"generated--kubeflow-pipelines--backend-object-store-auth","existingSecretAccessKeyKey":"access_key","existingSecretSecretKeyKey":"secret_key","generateSecret":true,"policy":{"Statement":[{"Action":["s3:GetBucketLocation","s3:ListBucket"],"Effect":"Allow","Resource":["arn:aws:s3:::kubeflow-pipelines"]},{"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject"],"Effect":"Allow","Resource":["arn:aws:s3:::kubeflow-pipelines/artifacts/*","arn:aws:s3:::kubeflow-pipelines/pipelines/*","arn:aws:s3:::kubeflow-pipelines/v2/artifacts/*"]}],"Version":"2012-10-17"}},{"existingSecret":"generated--kubeflow-pipelines--profile-object-store-auth--whirlpool-weather-forecast","existingSecretAccessKeyKey":"access_key","existingSecretSecretKeyKey":"secret_key","generateSecret":true,"policy":{"Statement":[{"Action":["s3:GetBucketLocation","s3:ListBucket"],"Effect":"Allow","Resource":["arn:aws:s3:::kubeflow-pipelines"]},{"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject"],"Effect":"Allow","Resource":["arn:aws:s3:::kubeflow-pipelines/artifacts/whirlpool-weather-forecast/*","arn:aws:s3:::kubeflow-pipelines/v2/artifacts/whirlpool-weather-forecast/*"]}],"Version":"2012-10-17"}}]
 
   ## identity configs for minio
   ##
@@ -163,9 +163,9 @@ minio:
   ## minio buckets
   ##  - these buckets are created and/or updated by a post-install job
   ##
-  buckets: []
+  buckets: [{"name":"kubeflow-pipelines","versioning":false}]
 
   ## minio access policies
   ##  - these policies are created and/or updated by a post-install job
   ##
-  policies: []
+  policies: [{"name":"dolphin@metalwhale.dev","policy":{"Statement":[{"Action":["s3:GetBucketLocation","s3:ListBucket"],"Effect":"Allow","Resource":["arn:aws:s3:::kubeflow-pipelines"]},{"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject"],"Effect":"Allow","Resource":["arn:aws:s3:::kubeflow-pipelines/artifacts/whirlpool-weather-forecast/*","arn:aws:s3:::kubeflow-pipelines/v2/artifacts/whirlpool-weather-forecast/*"]}],"Version":"2012-10-17"}}]

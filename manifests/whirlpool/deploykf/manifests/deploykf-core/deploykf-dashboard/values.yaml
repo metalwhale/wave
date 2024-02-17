@@ -53,10 +53,39 @@ centralDashboard:
         text: Volumes
         icon: device:storage
         link: "/volumes/"
+      - type: item
+        text: KFP - Pipelines
+        icon: kubeflow:pipeline-centered
+        link: "/pipeline/#/pipelines"
+      - type: item
+        text: KFP - Experiments
+        icon: done-all
+        link: "/pipeline/#/experiments"
+      - type: item
+        text: KFP - Runs
+        icon: maps:directions-run
+        link: "/pipeline/#/runs"
+      - type: item
+        text: KFP - Recurring Runs
+        icon: device:access-alarm
+        link: "/pipeline/#/recurringruns"
+      - type: item
+        text: KFP - Artifacts
+        icon: editor:bubble-chart
+        link: "/pipeline/#/artifacts"
+      - type: item
+        text: KFP - Executions
+        icon: av:play-arrow
+        link: "/pipeline/#/executions"
 
     ## external links that appear in the sidebar
     ##
     externalLinks:
+      - type: item
+        iframe: false
+        text: Argo Server
+        icon: settings-input-composite
+        link: "http://argo-server.whirlpool.wave.m-cloud.dev"
       - type: item
         iframe: false
         text: Minio Console
@@ -69,6 +98,9 @@ centralDashboard:
       - text: Create a new Notebook
         desc: Kubeflow Notebooks
         link: "/jupyter/new"
+      - text: Upload a Pipeline
+        desc: Kubeflow Pipelines
+        link: "/pipeline/#/pipelines"
 
     ## documentation links that appear in the home page
     ##
@@ -76,6 +108,9 @@ centralDashboard:
       - text: "deployKF Website"
         desc: "The tool that deployed your ML platform!"
         link: "https://github.com/deployKF/deployKF"
+      - text: Kubeflow Pipelines Documentation
+        desc: Documentation for Kubeflow Pipelines
+        link: https://www.kubeflow.org/docs/components/pipelines/
       - text: Kubeflow Notebooks Documentation
         desc: Documentation for Kubeflow Notebooks
         link: https://www.kubeflow.org/docs/components/notebooks/

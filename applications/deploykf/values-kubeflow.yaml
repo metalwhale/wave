@@ -1,3 +1,6 @@
+kubeflow_dependencies:
+  kubeflow_argo_workflows:
+    enabled: true
 kubeflow_tools:
   notebooks:
     enabled: true
@@ -7,5 +10,7 @@ kubeflow_tools:
           - kubeflownotebookswg/codeserver-python:v1.7.0
           - metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
         value: metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
+  pipelines:
+    enabled: true
   volumes:
     enabled: true
