@@ -3,9 +3,9 @@
 ########################################
 deployKF_helpers:
   deploykf_profiles:
-    users_id_mapping: {"dolphin":{"email":"dolphin@metalwhale.dev","id":"dolphin"},"orca":{"email":"orca@metalwhale.dev","id":"orca"},"whale":{"email":"whale@metalwhale.dev","id":"whale"},"ziphius":{"email":"ziphius@metalwhale.dev","id":"ziphius"}}
-    profiles_users_access_mapping: {"whirlpool-weather-forecast":{"dolphin":{"notebooksAccess":true,"role":"edit"}}}
-    users_profiles_access_mapping: {"dolphin":{"whirlpool-weather-forecast":{"notebooksAccess":true,"role":"edit"}}}
+    users_id_mapping: {"dolphin":{"email":"dolphin@metalwhale.dev","id":"dolphin"},"humpback":{"email":"humpback@metalwhale.dev","id":"humpback"},"orca":{"email":"orca@metalwhale.dev","id":"orca"},"whale":{"email":"whale@metalwhale.dev","id":"whale"},"ziphius":{"email":"ziphius@metalwhale.dev","id":"ziphius"}}
+    profiles_users_access_mapping: {"whirlpool-lobtail":{"humpback":{"notebooksAccess":true,"role":"edit"},"ziphius":{"notebooksAccess":true,"role":"edit"}},"whirlpool-weather-forecast":{"orca":{"notebooksAccess":true,"role":"edit"},"ziphius":{"notebooksAccess":true,"role":"edit"}}}
+    users_profiles_access_mapping: {"humpback":{"whirlpool-lobtail":{"notebooksAccess":true,"role":"edit"}},"orca":{"whirlpool-weather-forecast":{"notebooksAccess":true,"role":"edit"}},"ziphius":{"whirlpool-lobtail":{"notebooksAccess":true,"role":"edit"},"whirlpool-weather-forecast":{"notebooksAccess":true,"role":"edit"}}}
 
   kubeflow:
     pipelines:
@@ -110,14 +110,14 @@ profileDefaults:
 ## user entities
 ##  - a list of users that can be referenced when defining profile members
 ##
-users: [{"email":"whale@metalwhale.dev","id":"whale"},{"email":"ziphius@metalwhale.dev","id":"ziphius"},{"email":"dolphin@metalwhale.dev","id":"dolphin"},{"email":"orca@metalwhale.dev","id":"orca"}]
+users: [{"email":"whale@metalwhale.dev","id":"whale"},{"email":"ziphius@metalwhale.dev","id":"ziphius"},{"email":"dolphin@metalwhale.dev","id":"dolphin"},{"email":"humpback@metalwhale.dev","id":"humpback"},{"email":"orca@metalwhale.dev","id":"orca"}]
 
 ## group entities
 ##  - a list of groups that can be referenced when defining profile members
 ##
-groups: [{"id":"weather-forecast","users":["dolphin"]}]
+groups: [{"id":"lobtail","users":["ziphius","humpback"]},{"id":"weather-forecast","users":["ziphius","orca"]}]
 
 ## profile definitions
 ##  - a list of profile definitions to be generated
 ##
-profiles: [{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"weather-forecast"}],"name":"whirlpool-weather-forecast"}]
+profiles: [{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"weather-forecast"}],"name":"whirlpool-weather-forecast"},{"members":[{"access":{"notebooksAccess":true,"role":"edit"},"group":"lobtail"}],"name":"whirlpool-lobtail"}]

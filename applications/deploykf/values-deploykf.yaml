@@ -13,16 +13,29 @@ deploykf_core:
         email: "ziphius@metalwhale.dev"
       - id: dolphin
         email: "dolphin@metalwhale.dev"
+      - id: humpback
+        email: "humpback@metalwhale.dev"
       - id: orca
         email: "orca@metalwhale.dev"
     groups:
+      - id: lobtail
+        users:
+          - ziphius
+          - humpback
       - id: weather-forecast
         users:
-          - dolphin
+          - ziphius
+          - orca
     profiles:
       - name: whirlpool-weather-forecast
         members:
           - group: weather-forecast
+            access:
+              role: edit
+              notebooksAccess: true
+      - name: whirlpool-lobtail
+        members:
+          - group: lobtail
             access:
               role: edit
               notebooksAccess: true
@@ -42,6 +55,10 @@ deploykf_core:
         - email: "dolphin@metalwhale.dev"
           password:
             value: "$2y$10$lNkeDskkgFz6uCtMMjXcJutatY6wofU15LKbsL8iaJKYlIq0KRrvG"
+            type: "hash"
+        - email: "humpback@metalwhale.dev"
+          password:
+            value: "$2y$10$m07JuNV4TRHoBigTHsJ9Fez4AyzYqurlIf6N4jStlfsTcaZmXxnaK"
             type: "hash"
         - email: "orca@metalwhale.dev"
           password:
