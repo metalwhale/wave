@@ -1,0 +1,13 @@
+version: "3"
+services:
+  whirlpool:
+    build:
+      context: ./
+    environment:
+      - KUBEFLOW_ENDPOINT=${KUBEFLOW_ENDPOINT}
+      - KUBEFLOW_USERNAME=${KUBEFLOW_USERNAME}
+      - KUBEFLOW_PASSWORD=${KUBEFLOW_PASSWORD}
+    volumes:
+      - ./:/usr/src/wave/applications/whirlpool/
+    tty: true
+    working_dir: /usr/src/wave/applications/whirlpool/

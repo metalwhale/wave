@@ -1,0 +1,14 @@
+# See: https://www.kubeflow.org/docs/components/pipelines/v1/sdk/component-development/#specify-your-components-metadata
+name: Train
+
+outputs:
+- {name: output_path, type: String}
+
+implementation:
+  container:
+    image: PLACEHOLDER # Will be overwritten when building pipeline
+    command: [
+      python3,
+      /usr/src/trainer.py,
+      {outputPath: output_path}
+    ]
