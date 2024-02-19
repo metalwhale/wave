@@ -4,5 +4,5 @@ See more at: [Access Kubeflow Pipelines API](https://www.deploykf.org/user-guide
 
 ## Usage example
 ```bash
-python3 main.py weather-forecast 0.1.0
+python3 -m pipelines.weather_forecast.main ./pipelines/weather_forecast/config.yaml
 ```

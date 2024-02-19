@@ -1,0 +1,33 @@
+# WARN: If you make any changes to this file without modifying the `version` field,
+#   ensure that you delete the old pipeline of that version using the Web UI, otherwise the new config will not be updated,
+#   because the version of pipeline is aligned with the version of trainer image
+trainerImage: metalwhaledev/weather-forecast-model-trainer
+version: 0.1.0
+
+# `{ outputPath: output_path }` is a placeholder, defines a dir path that the trainer program should write the output files into
+command: [python3, /usr/src/trainer.py, { outputPath: output_path }]
+
+# About the names of `envVars`, see https://github.com/metalwhale/weather-forecast-model repo.
+# About the values or secrets of `envVars`, see `/manifests/whirlpool-weather-forecast` dir of this repo.
+envVars:
+  - name: WP_INPUT_DATABASE_HOST
+    value: host
+  - name: WP_INPUT_DATABASE_PORT
+    value: port
+  - name: WP_INPUT_DATABASE_DB
+    value: db
+  - name: WP_INPUT_DATABASE_USER
+    value: user
+  - name: WP_INPUT_DATABASE_PASSWORD
+    secretName: database-credential
+    secretKey: database_password
+
+# Inputs of the pipeline, where `envVarName` is the name of env var that holds the corresponding value
+runInputs:
+  start_date:
+    envVarName: WP_INPUT_START_DATE
+    value: 2000/01/01
+
+# `WhenConfigUpdated`: Run a new job when this config file changes
+# Otherwise don't run
+runPolicy: WhenConfigUpdated
