@@ -12,5 +12,9 @@ kubeflow_tools:
         value: metalwhaledev/kubeflow-notebook-codeserver:v1.8.0
   pipelines:
     enabled: true
+    profileResourceGeneration:
+      kfpApiTokenPodDefault: true
+  poddefaults_webhook:
+    enabled: true
   volumes:
     enabled: true

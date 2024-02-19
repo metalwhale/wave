@@ -1,5 +1,5 @@
 # See: https://www.kubeflow.org/docs/components/pipelines/v1/sdk/component-development/#specify-your-components-metadata
-name: train
+name: Train
 
 outputs:
   - { name: output_path, type: String }

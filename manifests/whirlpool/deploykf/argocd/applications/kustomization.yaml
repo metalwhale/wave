@@ -39,4 +39,5 @@ resources:
   - kubeflow-tools/notebooks--jupyter-web-app.yaml
   - kubeflow-tools/notebooks--notebook-controller.yaml
   - kubeflow-tools/pipelines.yaml
+  - kubeflow-tools/poddefaults-webhook.yaml
   - kubeflow-tools/volumes--volumes-web-app.yaml

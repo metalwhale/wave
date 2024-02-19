@@ -1,6 +1,6 @@
 import datetime
 import json
-import sys
+import os
 import yaml
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -13,51 +13,76 @@ from kubernetes.client.models import V1EnvVar
 from ..kubeflow import login
 
 
-def simple_pipeline(**inputs):
-    # Load config
-    with open(sys.argv[1]) as config_file:
-        config_obj = yaml.safe_load(config_file)
+def notify(mlpipeline_ui_metadata_path: kfp.components.OutputPath()):
+    # See: https://www.deploykf.org/user-guides/access-kubeflow-pipelines-api/#authentication-flow_2, PodDefault injection
+    import os
+    import kfp
+    kfp_client = kfp.Client()
+    run = kfp_client.get_run(os.environ["WP_KFP_RUN_ID"])
+    print(vars(run))
+    # See: https://www.kubeflow.org/docs/components/pipelines/v1/sdk/output-viewer/#markdown-1
+    import json
+    metadata = {
+        "outputs": [{
+            "type": "markdown",
+            "storage": "inline",
+            "source": (
+                "## GitHub commit URL:\n"
+                f"https://github.com/metalwhale/wave/commit/{os.environ['WP_GITHUB_SHA']}"
+            ),
+        }],
+    }
+    with open(mlpipeline_ui_metadata_path, "w") as metadata_file:
+        json.dump(metadata, metadata_file)
+
+
+def simple_pipeline(config_obj, **inputs):
     # Load train component
     with open(Path(__file__).parent / "train_component.yaml") as train_comp_file:
         # See: https://www.kubeflow.org/docs/components/pipelines/v1/sdk/component-development/#using-your-component-in-a-pipeline
         train_obj = yaml.safe_load(train_comp_file)
-        train_obj["implementation"]["container"]["image"] = f"{config_obj["trainerImage"]}:{config_obj["version"]}"
+        train_obj["implementation"]["container"]["image"] = f"{config_obj['trainerImage']}"
         train_obj["implementation"]["container"]["command"] = config_obj["command"]
         train_comp_text = yaml.safe_dump(train_obj)
-        train_comp = kfp.components.load_component_from_text(train_comp_text)
+        train_op: kfp.dsl.ContainerOp = kfp.components.load_component_from_text(train_comp_text)()
     # Add env vars and secrets
-    train_step: kfp.dsl.ContainerOp = train_comp()
     for env_var in config_obj["envVars"]:
-        if "secretName" in env_var and "secretKey" in env_var:
-            train_step = train_step.apply(use_k8s_secret(
+        if "value" in env_var:
+            train_op = train_op.add_env_variable(V1EnvVar(name=env_var["name"], value=env_var["value"]))
+        elif "secretName" in env_var and "secretKey" in env_var:
+            train_op = train_op.apply(use_k8s_secret(
                 secret_name=env_var["secretName"],
                 k8s_secret_key_to_env={env_var["secretKey"]: env_var["name"]},
             ))
-        elif "value" in env_var:
-            train_step = train_step.add_env_variable(V1EnvVar(name=env_var["name"], value=env_var["value"]))
     # Additional placeholder env vars
-    train_step = train_step.add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
+    train_op = train_op\
+        .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
         .add_env_variable(V1EnvVar(name="WP_KFP_EXECUTION_ID", value=kfp.dsl.EXECUTION_ID_PLACEHOLDER))
     # Add inputs
     for input_env_var_name, input_value in inputs.items():
         if input_env_var_name in config_obj["runInputs"]:
-            train_step = train_step.add_env_variable(
+            train_op = train_op.add_env_variable(
                 V1EnvVar(name=config_obj["runInputs"][input_env_var_name]["envVarName"], value=input_value)
             )
-    train_step.container.set_image_pull_policy("Always")
+    train_op.container.set_image_pull_policy("Always")
+    # Notify component
+    notify_op = kfp.components.create_component_from_func(notify, packages_to_install=["kfp==1.8.22"])()
+    notify_op\
+        .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
+        .add_env_variable(V1EnvVar(name="WP_GITHUB_SHA", value=os.environ.get("GITHUB_SHA", "")))
+    # For PodDefault injection, see https://github.com/deployKF/deployKF/blob/v0.1.3/generator/default_values.yaml#L1854-L1871
+    notify_op.add_pod_label("kubeflow-pipelines-api-token", "true")
+    notify_op.after(train_op)
 
 
-def compiple_simple_pipeline(pipeline_func) -> str:
-    pipeline_file_path = str(Path(sys.argv[1]).parent.absolute() / "pipeline.yaml")
+def compiple_simple_pipeline(pipeline_func, pipeline_file_output_dir_path: str) -> str:
+    pipeline_file_path = os.path.join(pipeline_file_output_dir_path, "pipeline.yaml")
     Compiler().compile(pipeline_func=pipeline_func, package_path=pipeline_file_path)
     return pipeline_file_path
 
 
-def upload_simple_pipeline(app_name: str, pipeline_file_path: str):
+def upload_simple_pipeline(config_obj, app_name: str, pipeline_file_path: str):
     client = login()
-    # Load config
-    with open(sys.argv[1]) as config_file:
-        config_obj = yaml.safe_load(config_file)
     # Experiment
     experiment_name = app_name
     experiment_id = client.create_experiment(experiment_name, namespace=f"whirlpool-{app_name}").id  # Idempotent?
@@ -72,8 +97,7 @@ def upload_simple_pipeline(app_name: str, pipeline_file_path: str):
     else:
         pipeline_id = pipelines[0].id
         # TODO: Delete old pipeline which has the same version but different config
-    # Align pipeline version with the trainer image version for simplicity
-    pipeline_version_name = f"{app_name}:{config_obj["version"]}"
+    pipeline_version_name = f"{app_name}:{config_obj['version']}"
     pipeline_versions = [
         v for v in client.list_pipeline_versions(pipeline_id).versions
         if v.name == pipeline_version_name
@@ -86,8 +110,8 @@ def upload_simple_pipeline(app_name: str, pipeline_file_path: str):
     else:
         version_id = pipeline_versions[0].id
     # Run
-    if config_obj["runPolicy"] == "WhenConfigUpdated":
-        job_name = f"{pipeline_version_name} {str(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))}"
+    if config_obj["runPolicy"] == "WhenConfigChanged":
+        job_name = f"{pipeline_version_name} {str(datetime.datetime.now(tz=ZoneInfo('Asia/Tokyo')))}"
         client.run_pipeline(
             experiment_id, job_name, pipeline_id=pipeline_id, version_id=version_id,
             params={input_key: input_param["value"] for input_key, input_param in config_obj["runInputs"].items()},

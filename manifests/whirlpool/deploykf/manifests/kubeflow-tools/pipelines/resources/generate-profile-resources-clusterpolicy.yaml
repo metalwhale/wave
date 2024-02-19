@@ -410,3 +410,50 @@ spec:
               app.kubernetes.io/instance: "kf-tools--pipelines"
           data:
             defaultPipelineRoot: "minio://kubeflow-pipelines/v2/artifacts/{{ request.object.metadata.name }}"
+
+    ################################################################################
+    ## PodDefault/kubeflow-pipelines-api-token
+    ################################################################################
+    - name: PodDefault--kubeflow-pipelines-api-token
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+              selector:
+                matchLabels:
+                  pipelines.kubeflow.org/enabled: "true"
+      generate:
+        apiVersion: kubeflow.org/v1alpha1
+        kind: PodDefault
+        name: kubeflow-pipelines-api-token
+        namespace: "{{ request.object.metadata.name }}"
+        synchronize: true
+        data:
+          metadata:
+            annotations:
+              argocd.argoproj.io/tracking-id: "kf-tools--pipelines:kubeflow.org/PodDefault:{{ request.object.metadata.name }}/kubeflow-pipelines-api-token"
+              argocd.argoproj.io/compare-options: "IgnoreExtraneous"
+              argocd.argoproj.io/sync-options: "Prune=false"
+            labels:
+              app.kubernetes.io/instance: "kf-tools--pipelines"
+          spec:
+            desc: "Mount a serviceAccountToken to authenticate with Kubeflow Pipelines API"
+            env:
+              - name: KF_PIPELINES_SA_TOKEN_PATH
+                value: "/var/run/secrets/ml-pipeline/token"
+            selector:
+              matchLabels:
+                kubeflow-pipelines-api-token: "true"
+            volumeMounts:
+              - mountPath: "/var/run/secrets/ml-pipeline"
+                name: volume-ml-pipeline-token
+                readOnly: true
+            volumes:
+              - name: volume-ml-pipeline-token
+                projected:
+                  sources:
+                    - serviceAccountToken:
+                        audience: pipelines.kubeflow.org
+                        expirationSeconds: 7200
+                        path: token

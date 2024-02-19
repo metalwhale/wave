@@ -1,8 +1,10 @@
+# Version of the pipeline, recommended to be named to show its relation with `trainerImage`
 # WARN: If you make any changes to this file without modifying the `version` field,
-#   ensure that you delete the old pipeline of that version using the Web UI, otherwise the new config will not be updated,
-#   because the version of pipeline is aligned with the version of trainer image
-trainerImage: metalwhaledev/weather-forecast-model-trainer
-version: 0.1.0
+#   ensure that you delete the old pipeline of that version using the Web UI, otherwise the new config will not be updated.
+version: 0.1.0-1
+
+# Trainer image
+trainerImage: metalwhaledev/weather-forecast-model-trainer:0.1.0
 
 # `{ outputPath: output_path }` is a placeholder, defines a dir path that the trainer program should write the output files into
 command: [python3, /usr/src/trainer.py, { outputPath: output_path }]
@@ -19,8 +21,9 @@ envVars:
   - name: WP_INPUT_DATABASE_USER
     value: user
   - name: WP_INPUT_DATABASE_PASSWORD
-    secretName: database-credential
-    secretKey: database_password
+    value: password
+    # secretName:
+    # secretKey:
 
 # Inputs of the pipeline, where `envVarName` is the name of env var that holds the corresponding value
 runInputs:
@@ -28,6 +31,6 @@ runInputs:
     envVarName: WP_INPUT_START_DATE
     value: 2000/01/01
 
-# `WhenConfigUpdated`: Run a new job when this config file changes
+# `WhenConfigChanged`: Run a new job when this config file changes
 # Otherwise don't run
-runPolicy: WhenConfigUpdated
+runPolicy: WhenConfigChanged
