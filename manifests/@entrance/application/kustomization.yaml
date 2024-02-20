@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - ./newswaters.yaml
   - ./whirlpool.yaml
+  - ./weather-forecast.yaml
   - ./vault.yaml
   - ./sandbox.yaml

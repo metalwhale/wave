@@ -10,7 +10,7 @@ trainerImage: metalwhaledev/weather-forecast-model-trainer:0.1.0
 command: [python3, /usr/src/trainer.py, { outputPath: output_path }]
 
 # About the names of `envVars`, see https://github.com/metalwhale/weather-forecast-model repo.
-# About the values or secrets of `envVars`, see `/manifests/whirlpool-weather-forecast` dir of this repo.
+# About the values or secrets of `envVars`, see `/manifests/weather-forecast` dir of this repo.
 envVars:
   - name: WP_INPUT_DATABASE_HOST
     value: host

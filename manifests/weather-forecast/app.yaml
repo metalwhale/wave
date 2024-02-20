@@ -1,11 +1,4 @@
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: database-credential
-stringData:
-  database_password: secret-orca
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:

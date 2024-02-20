@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: whirlpool-weather-forecast
+  name: weather-forecast
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,25 +10,32 @@ spec:
   sourceRepos:
     - https://github.com/metalwhale/wave.git
   destinations:
-    - namespace: whirlpool-weather-forecast # Created when generating profile at /packages/deploykf/custom-values.yaml
+    - namespace: weather-forecast
       server: https://kubernetes.default.svc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: weather-forecast
+  labels:
+    name: weather-forecast
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: whirlpool-weather-forecast
+  name: weather-forecast
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: whirlpool-weather-forecast
+  project: weather-forecast
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/whirlpool-weather-forecast
+    path: manifests/weather-forecast
   destination:
     server: https://kubernetes.default.svc
-    namespace: whirlpool-weather-forecast
+    namespace: weather-forecast
   syncPolicy:
     automated:
       prune: true
