@@ -41,33 +41,35 @@ def simple_pipeline(config_obj, **inputs):
     with open(Path(__file__).parent / "train_component.yaml") as train_comp_file:
         # See: https://www.kubeflow.org/docs/components/pipelines/v1/sdk/component-development/#using-your-component-in-a-pipeline
         train_obj = yaml.safe_load(train_comp_file)
-        train_obj["implementation"]["container"]["image"] = f"{config_obj['trainerImage']}"
-        train_obj["implementation"]["container"]["command"] = config_obj["command"]
+        train_obj["implementation"]["container"]["image"] = f"{config_obj['container']['image']}"
+        train_obj["implementation"]["container"]["command"] = config_obj["container"]["command"]
         train_comp_text = yaml.safe_dump(train_obj)
         train_op: kfp.dsl.ContainerOp = kfp.components.load_component_from_text(train_comp_text)()
     # Add env vars and secrets
-    for env_var in config_obj["envVars"]:
-        if "value" in env_var:
-            train_op = train_op.add_env_variable(V1EnvVar(name=env_var["name"], value=env_var["value"]))
-        elif "secretName" in env_var and "secretKey" in env_var:
-            train_op = train_op.apply(use_k8s_secret(
-                secret_name=env_var["secretName"],
-                k8s_secret_key_to_env={env_var["secretKey"]: env_var["name"]},
-            ))
+    if "env" in config_obj["container"]:
+        for env in config_obj["container"]["env"]:
+            train_op.container.add_env_variable(V1EnvVar(name=env["name"], value=env["value"]))
     # Additional placeholder env vars
-    train_op = train_op\
+    train_op.container\
         .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
         .add_env_variable(V1EnvVar(name="WP_KFP_EXECUTION_ID", value=kfp.dsl.EXECUTION_ID_PLACEHOLDER))
     # Add inputs
-    for input_env_var_name, input_value in inputs.items():
-        if input_env_var_name in config_obj["runInputs"]:
-            train_op = train_op.add_env_variable(
-                V1EnvVar(name=config_obj["runInputs"][input_env_var_name]["envVarName"], value=input_value)
-            )
+    for input_env, input_value in inputs.items():
+        if input_env in config_obj["runInputs"]:
+            train_op.container.add_env_variable(V1EnvVar(
+                name=config_obj["runInputs"][input_env]["envName"],
+                value=input_value,
+            ))
     train_op.container.set_image_pull_policy("Always")
+    if "podAnnotations" in config_obj:
+        for name, value in config_obj["podAnnotations"].items():
+            train_op.add_pod_annotation(name, value)
     # Notify component
-    notify_op = kfp.components.create_component_from_func(notify, packages_to_install=["kfp==1.8.22"])()
-    notify_op\
+    notify_op: kfp.dsl.ContainerOp = kfp.components.create_component_from_func(
+        notify,
+        packages_to_install=["kfp==1.8.22"],
+    )()
+    notify_op.container\
         .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
         .add_env_variable(V1EnvVar(name="WP_GITHUB_SHA", value=os.environ.get("GITHUB_SHA", "")))
     # For PodDefault injection, see https://github.com/deployKF/deployKF/blob/v0.1.3/generator/default_values.yaml#L1854-L1871
@@ -114,5 +116,5 @@ def upload_simple_pipeline(config_obj, app_name: str, pipeline_file_path: str):
         job_name = f"{pipeline_version_name} {str(datetime.datetime.now(tz=ZoneInfo('Asia/Tokyo')))}"
         client.run_pipeline(
             experiment_id, job_name, pipeline_id=pipeline_id, version_id=version_id,
-            params={input_key: input_param["value"] for input_key, input_param in config_obj["runInputs"].items()},
+            params={input_env: input_param["value"] for input_env, input_param in config_obj["runInputs"].items()},
         )
