@@ -52,7 +52,7 @@ spec:
           resources:
             limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "250m"
           livenessProbe:
             httpGet:
               path: /healthz
@@ -65,8 +65,8 @@ spec:
               value: "6334"
           resources:
             limits:
-              memory: "256Mi"
-              cpu: "200m"
+              memory: "512Mi"
+              cpu: "500m"
           volumeMounts:
             - mountPath: /qdrant/storage
               name: vector-storage
