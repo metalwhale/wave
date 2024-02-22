@@ -13,27 +13,13 @@ from kubernetes.client.models import V1EnvVar
 from ..kubeflow import login
 
 
-def notify(mlpipeline_ui_metadata_path: kfp.components.OutputPath()):
+def notify():
     # See: https://www.deploykf.org/user-guides/access-kubeflow-pipelines-api/#authentication-flow_2, PodDefault injection
     import os
     import kfp
     kfp_client = kfp.Client()
     run = kfp_client.get_run(os.environ["WP_KFP_RUN_ID"])
     print(vars(run))
-    # See: https://www.kubeflow.org/docs/components/pipelines/v1/sdk/output-viewer/#markdown-1
-    import json
-    metadata = {
-        "outputs": [{
-            "type": "markdown",
-            "storage": "inline",
-            "source": (
-                "## GitHub commit URL:\n"
-                f"https://github.com/metalwhale/wave/commit/{os.environ['WP_GITHUB_SHA']}"
-            ),
-        }],
-    }
-    with open(mlpipeline_ui_metadata_path, "w") as metadata_file:
-        json.dump(metadata, metadata_file)
 
 
 def simple_pipeline(config_obj, **inputs):
@@ -69,9 +55,7 @@ def simple_pipeline(config_obj, **inputs):
         notify,
         packages_to_install=["kfp==1.8.22"],
     )()
-    notify_op.container\
-        .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
-        .add_env_variable(V1EnvVar(name="WP_GITHUB_SHA", value=os.environ.get("GITHUB_SHA", "")))
+    notify_op.container.add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))
     # For PodDefault injection, see https://github.com/deployKF/deployKF/blob/v0.1.3/generator/default_values.yaml#L1854-L1871
     notify_op.add_pod_label("kubeflow-pipelines-api-token", "true")
     notify_op.after(train_op)
@@ -108,6 +92,7 @@ def upload_simple_pipeline(config_obj, app_name: str, pipeline_file_path: str):
         version_id = client.upload_pipeline_version(
             pipeline_file_path, pipeline_version_name,
             pipeline_id=pipeline_id,
+            description=f"https://github.com/metalwhale/wave/commit/{os.environ['GITHUB_SHA']}",
         ).id
     else:
         version_id = pipeline_versions[0].id
