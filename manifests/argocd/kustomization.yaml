@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   # See: https://argo-cd.readthedocs.io/en/release-2.9/operator-manual/declarative-setup/#manage-argo-cd-using-argo-cd
   - github.com/argoproj/argo-cd//manifests/cluster-install?ref=v2.9.6
+  - ./ingress.yaml
