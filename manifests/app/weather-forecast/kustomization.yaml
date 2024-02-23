@@ -10,4 +10,3 @@ helmCharts:
 
 resources:
   - ./app.yaml
-  - ./secret.yaml

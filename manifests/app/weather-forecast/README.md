@@ -4,7 +4,8 @@
 CREATE DATABASE <i>weather</i>;
 
 CREATE USER <i>model_trainer</i> WITH PASSWORD '<b>MODEL_TRAINER_PASSWORD</b>';
-GRANT ALL PRIVILEGES ON DATABASE <i>weather</i> TO <i>model_trainer</i>;
+\c <i>weather</i>;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO <i>model_trainer</i>;
 </pre>
 
 ### Setup secrets on Vault
@@ -12,7 +13,8 @@ Refer to the guide at [`vault` config example](../vault/README.md#config-example
 
 #### Secret values
 <pre>
-vault kv put <i>clam/weather-forecast/learning-database model_trainer_password="<b>MODEL_TRAINER_PASSWORD</b>"</i>
+vault kv put <i>clam/weather-forecast/learning-database</i> \
+  <i>model_trainer_password="<b>MODEL_TRAINER_PASSWORD</b>"</i>
 </pre>
 
 #### Policy
@@ -25,10 +27,11 @@ EOF
 </pre>
 
 #### Role
+Model trainer (`default-editor` is the name of Service Account assigned to pods that Kubeflow Runs use):
 <pre>
 vault write auth/kubernetes/role/<i>weather-forecast-model-trainer</i> \
-  bound_service_account_names=<i>model-trainer</i> \
-  bound_service_account_namespaces=<i>weather-forecast</i> \
+  bound_service_account_names=<i>default-editor</i> \
+  bound_service_account_namespaces=<i>whirlpool-weather-forecast</i> \
   policies=<i>weather-forecast-learning-database</i> \
   ttl=24h
 </pre>

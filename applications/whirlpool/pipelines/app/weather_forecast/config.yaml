@@ -14,28 +14,18 @@ container:
   # Environment variables (optional)
   env:
     # About the names of `env`, see https://github.com/metalwhale/weather-forecast-model repo.
-    # About the values or secrets of `env`, see `/manifests/weather-forecast` dir of this repo.
+    # About the values or secrets of `env`, see `/manifests/app/weather-forecast` dir of this repo.
     - name: WP_INPUT_DATABASE_HOST
-      value: database-postgresql.weather-forecast
+      value: learning-database-postgresql.weather-forecast
     - name: WP_INPUT_DATABASE_PORT
       value: 5432
     - name: WP_INPUT_DATABASE_DB
       value: weather
     - name: WP_INPUT_DATABASE_USER
-      value: model_trainer # See `/manifests/weather-forecast/README.md`
-    - name: WP_INPUT_SECRET_FILE_PATH
-      value: /vault/secrets/.env # See below vault annotations about `.env` file name
-
-# Annotations (optional)
-podAnnotations:
-  # Use vault to inject secrets, see `/manifests/weather-forecast/README.md`
-  vault.hashicorp.com/agent-inject: "true"
-  vault.hashicorp.com/role: "weather-forecast-model-trainer"
-  vault.hashicorp.com/agent-inject-secret-.env: "clam/data/weather-forecast/model-trainer"
-  vault.hashicorp.com/agent-inject-template-.env: |
-    {{- with secret "clam/data/weather-forecast/model-trainer" -}}
-    DATABASE_PASSWORD={{ .Data.data.database_password }}
-    {{- end }}
+      value: model_trainer
+    - name: WP_INPUT_DATABASE_PASSWORD
+      secretName: learning-database
+      secretKey: model_trainer_password # See: `/manifests/core/whirlpool-weather-forecast/secret.yaml` file
 
 # Inputs of the pipeline, where `envName` is the name of env var that holds the corresponding value
 runInputs:

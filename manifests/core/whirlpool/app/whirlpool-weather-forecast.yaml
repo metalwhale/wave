@@ -1,0 +1,21 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: whirlpool-weather-forecast
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/core/whirlpool-weather-forecast
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: whirlpool-weather-forecast
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

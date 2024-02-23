@@ -34,7 +34,13 @@ def simple_pipeline(config_obj, **inputs):
     # Add env vars and secrets
     if "env" in config_obj["container"]:
         for env in config_obj["container"]["env"]:
-            train_op.container.add_env_variable(V1EnvVar(name=env["name"], value=env["value"]))
+            if "value" in env:
+                train_op.container.add_env_variable(V1EnvVar(name=env["name"], value=env["value"]))
+            elif "secretName" in env and "secretKey" in env:
+                train_op.apply(use_k8s_secret(
+                    secret_name=env["secretName"],
+                    k8s_secret_key_to_env={env["secretKey"]: env["name"]},
+                ))
     # Additional placeholder env vars
     train_op.container\
         .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
