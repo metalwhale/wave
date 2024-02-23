@@ -6,7 +6,8 @@ helmCharts:
     version: 14.1.3
     repo: https://charts.bitnami.com/bitnami
     namespace: weather-forecast
-    releaseName: database
+    releaseName: learning-database
 
 resources:
   - ./app.yaml
+  - ./secret.yaml

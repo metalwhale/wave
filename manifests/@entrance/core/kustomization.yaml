@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
   - ./argocd.yaml
+  - ./external-secrets.yaml
   - ./vault.yaml
   - ./whirlpool.yaml
