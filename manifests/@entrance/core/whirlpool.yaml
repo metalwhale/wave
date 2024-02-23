@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: whirlpool
+  labels:
+    name: whirlpool
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: whirlpool
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/core/whirlpool
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: whirlpool
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - FailOnSharedResource=true

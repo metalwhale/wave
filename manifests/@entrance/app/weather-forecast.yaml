@@ -1,0 +1,42 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: weather-forecast
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  sourceRepos:
+    - https://github.com/metalwhale/wave.git
+  destinations:
+    - namespace: weather-forecast
+      server: https://kubernetes.default.svc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: weather-forecast
+  labels:
+    name: weather-forecast
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: weather-forecast
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: weather-forecast
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/app/weather-forecast
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: weather-forecast
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -3,4 +3,4 @@ argocd:
     repo:
       url: https://github.com/metalwhale/wave
       revision: main
-      path: ./manifests/whirlpool/deploykf
+      path: ./manifests/core/whirlpool/deploykf
