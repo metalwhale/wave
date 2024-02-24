@@ -1,0 +1,14 @@
+---
+apiVersion: oss.grafana.crossplane.io/v1alpha1
+kind: Organization
+metadata:
+  name: weather-forecast
+spec:
+  forProvider:
+    admins: []
+    createUsers: false
+    editors: []
+    name: weather-forecast
+    viewers: []
+  providerConfigRef:
+    name: grafana-provider

@@ -9,7 +9,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO <i>model_traine
 </pre>
 
 ### Setup secrets on Vault
-Refer to the guide at [`vault` config example](../vault/README.md#config-example) to setup the following config:
+Refer to the guide at [`vault` config example](/manifests/core/vault/README.md#config-example) to setup the following config:
 
 #### Secret values
 <pre>
@@ -27,7 +27,7 @@ EOF
 </pre>
 
 #### Role
-Model trainer (`default-editor` is the name of Service Account assigned to pods that Kubeflow Runs use):
+Model trainer (reuse `default-editor` service account, created by Kubeflow, will be assigned to pods that Kubeflow Runs use):
 <pre>
 vault write auth/kubernetes/role/<i>weather-forecast-model-trainer</i> \
   bound_service_account_names=<i>default-editor</i> \

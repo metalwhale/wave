@@ -1,5 +1,5 @@
 ## Usage
-Refer to the guide at [`vault` config example](../vault/README.md#config-example) to setup the following config:
+Refer to the guide at [`vault` config example](/manifests/core/vault/README.md#config-example) to setup the following config:
 
 Secret:
 <pre>

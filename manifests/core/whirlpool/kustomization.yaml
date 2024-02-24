@@ -18,3 +18,4 @@ transformers:
 resources:
   - ./deploykf/argocd
   - ./app
+  - ./grafana
