@@ -17,11 +17,6 @@ helmCharts:
         enabled: true
         hosts:
           - grafana.whirlpool.wave.m-cloud.dev
-  - name: crossplane # See: https://artifacthub.io/packages/helm/crossplane/crossplane/1.16.0-rc.0.40.gd8173e7f
-    version: 1.16.0-rc.0.40.gd8173e7f
-    repo: https://charts.crossplane.io/master/
-    namespace: whirlpool
-    releaseName: crossplane
 
 # See: https://marketplace.upbound.io/providers/grafana/provider-grafana/v0.10.2/managed-resources
 resources:

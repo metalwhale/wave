@@ -5,4 +5,5 @@ resources:
   - ./argocd.yaml
   - ./external-secrets.yaml
   - ./vault.yaml
+  - ./crossplane.yaml
   - ./whirlpool.yaml

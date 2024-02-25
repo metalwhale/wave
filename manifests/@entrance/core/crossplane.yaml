@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: crossplane
+  labels:
+    name: crossplane
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/core/crossplane
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: crossplane
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
