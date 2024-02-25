@@ -26,3 +26,17 @@ spec:
       namespace: whirlpool
   providerConfigRef:
     name: grafana-provider
+---
+# See: https://grafana.com/docs/grafana/latest/datasources/prometheus/#provisioning-example
+apiVersion: oss.grafana.crossplane.io/v1alpha1
+kind: DataSource
+metadata:
+  name: prometheus
+spec:
+  forProvider:
+    type: prometheus
+    url: http://prometheus-server
+    name: prometheus
+    orgId: "1" # Main Org.
+  providerConfigRef:
+    name: grafana-provider

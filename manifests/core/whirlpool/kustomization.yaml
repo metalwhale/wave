@@ -17,5 +17,6 @@ transformers:
 
 resources:
   - ./deploykf/argocd
-  - ./grafana
+  - ./grafana.yaml
+  - ./prometheus.yaml
   - ./@app
