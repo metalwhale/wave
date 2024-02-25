@@ -2,4 +2,4 @@ Whales do not get swept away but rather let themselves drift along with the whir
 
 ## System design
 ### Roles
-![Roles](./doc/system-design-roles.drawio.svg)
+![Roles](./@doc/system-design-roles.drawio.svg)
