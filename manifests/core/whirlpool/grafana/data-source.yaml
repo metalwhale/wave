@@ -1,0 +1,28 @@
+---
+# See
+# - https://grafana.com/docs/grafana/latest/datasources/postgres/#provisioning-example
+# - https://github.com/grafana/crossplane-provider-grafana/blob/v0.10.2/examples-generated/oss/v1alpha1/datasource.yaml
+apiVersion: oss.grafana.crossplane.io/v1alpha1
+kind: DataSource
+metadata:
+  name: weather-forecast-learning-database
+spec:
+  forProvider:
+    # See `/manifests/app/weather-forecast/README.md` file
+    type: postgres
+    url: learning-database-postgresql.weather-forecast:5432
+    username: monitor
+    databaseName: weather
+    name: weather-forecast-learning-database
+    organizationRef:
+      name: weather-forecast
+    jsonDataEncoded: |-
+      ${jsonencode({
+          "sslmode" = "disable"
+        })}
+    secureJsonDataEncodedSecretRef: # See `./secret.yaml` file
+      key: learning_database
+      name: weather-forecast-learning-database
+      namespace: whirlpool
+  providerConfigRef:
+    name: grafana-provider

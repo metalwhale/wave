@@ -2,11 +2,16 @@
 ### Create database and user
 <pre>
 CREATE DATABASE <i>weather</i>;
+\c <i>weather</i>;
 
 CREATE USER <i>model_trainer</i> WITH PASSWORD '<b>MODEL_TRAINER_PASSWORD</b>';
-\c <i>weather</i>;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO <i>model_trainer</i>;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO <i>model_trainer</i>;
+
+CREATE USER <i>monitor</i> WITH PASSWORD '<b>MONITOR_PASSWORD</b>';
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO <i>monitor</i>;
 </pre>
+- `model_trainer` is used at [`whirlpool-weather-forecast`](/manifests/core/whirlpool-weather-forecast)
+- `monitor` is used at [`whirlpool/grafana`](/manifests/core/whirlpool/grafana)
 
 ### Setup secrets on Vault
 Refer to the guide at [`vault` config example](/manifests/core/vault/README.md#config-example) to setup the following config:
@@ -27,7 +32,7 @@ EOF
 </pre>
 
 #### Role
-Model trainer (reuse `default-editor` service account, created by Kubeflow, will be assigned to pods that Kubeflow Runs use):
+Whirlpool model trainer (reuse `default-editor` service account, created by Kubeflow, will be assigned to pods that Kubeflow Runs use):
 <pre>
 vault write auth/kubernetes/role/<i>weather-forecast-model-trainer</i> \
   bound_service_account_names=<i>default-editor</i> \
