@@ -2,13 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: newswaters
 
-helmCharts:
-  - name: cloudnative-pg # See: https://artifacthub.io/packages/helm/cloudnative-pg/cloudnative-pg/0.18.2
-    version: 0.18.2
-    repo: https://cloudnative-pg.io/charts/
-    namespace: newswaters
-    releaseName: coral
-
 resources:
   - database.yaml
   - search-engine.yaml

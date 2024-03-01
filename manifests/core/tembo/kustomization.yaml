@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+  - name: tembo-operator # See: https://tembo.io/docs/tembo-stacks/tembo-operator-install
+    version: 0.4.0 # See: https://github.com/tembo-io/tembo/blob/c906232/charts/tembo-operator/Chart.yaml#L6
+    repo: https://tembo-io.github.io/tembo
+    namespace: tembo
+    releaseName: tembo
+    valuesInline:
+      controller:
+        image:
+          tag: c906232
+      pod-init:
+        image:
+          tag: c906232

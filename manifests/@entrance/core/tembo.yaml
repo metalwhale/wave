@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tembo
+  labels:
+    name: tembo
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tembo
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/metalwhale/wave.git
+    targetRevision: HEAD
+    path: manifests/core/tembo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tembo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: coredbs.coredb.io
+      jqPathExpressions:
+        - .spec.names.categories
+        - .spec.versions[].additionalPrinterColumns
