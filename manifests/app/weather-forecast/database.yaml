@@ -1,0 +1,46 @@
+---
+# See: https://github.com/tembo-io/tembo/blob/c906232/tembo-operator/src/apis/coredb_types.rs#L378-L555
+apiVersion: coredb.io/v1alpha1
+kind: CoreDB
+metadata:
+  name: learning-database
+spec:
+  image: quay.io/tembo/standard-cnpg:16-8f5366e
+  stop: false
+  stack:
+    name: Standard
+  # # Installing `timescaledb` doesn't go well... disable it for now.
+  # stack:
+  #   name: Standard
+  #   postgres_config:
+  #     - name: shared_preload_libraries
+  #       value: timescaledb
+  # trunk_installs:
+  #   - name: timescaledb # See: https://pgt.dev/extensions/timescaledb
+  #     version: 2.13.1
+  # extensions:
+  #   - name: timescaledb
+  #     locations:
+  #       - enabled: true
+  #         database: app
+  #         version: 2.13.1
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-whirlpool-to-learning-database
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: learning-database
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchExpressions:
+              - key: whirlpool/role
+                operator: Exists
+      ports:
+        - protocol: TCP
+          port: 5432

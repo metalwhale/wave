@@ -29,9 +29,9 @@ vault write auth/kubernetes/role/<i>whirlpool-grafana-provider</i> \
 ### Secret values
 <pre>
 vault kv put <i>clam/whirlpool/grafana/weather-forecast</i> \
-  <i>learning_database='{"password":"<b>PASSWORD</b>"}'</i>
+  <i>learning_database='{"password":"<b>MONITOR_PASSWORD</b>"}'</i>
 </pre>
-The secure json data has `password` key ([reference](https://grafana.com/docs/grafana/latest/datasources/postgres/#provisioning-example)), with **PASSWORD** created at [`weather-forecast`](/manifests/app/weather-forecast/README.md).
+The secure json data has `password` key ([reference](https://grafana.com/docs/grafana/latest/datasources/postgres/#provisioning-example)), with **MONITOR_PASSWORD** created at [`weather-forecast`](/manifests/app/weather-forecast/README.md).
 
 ### Policy
 <pre>

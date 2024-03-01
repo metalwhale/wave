@@ -1,8 +1,7 @@
 ## Learning database
 ### Create database and user
 <pre>
-CREATE DATABASE <i>weather</i>;
-\c <i>weather</i>;
+\c <i>app</i>;
 
 CREATE USER <i>model_trainer</i> WITH PASSWORD '<b>MODEL_TRAINER_PASSWORD</b>';
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO <i>model_trainer</i>;
@@ -10,6 +9,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO <i>model_tra
 CREATE USER <i>monitor</i> WITH PASSWORD '<b>MONITOR_PASSWORD</b>';
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO <i>monitor</i>;
 </pre>
+- `app`: default database name when using Tembo
 - `model_trainer` is used at [`whirlpool-weather-forecast`](/manifests/core/whirlpool-weather-forecast)
 - `monitor` is used at [`whirlpool/grafana`](/manifests/core/whirlpool/grafana)
 

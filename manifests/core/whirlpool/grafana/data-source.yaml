@@ -10,9 +10,9 @@ spec:
   forProvider:
     # See `/manifests/app/weather-forecast/README.md` file
     type: postgres
-    url: learning-database-postgresql.weather-forecast:5432
+    url: learning-database-r.weather-forecast:5432
     username: monitor
-    databaseName: weather
+    databaseName: app
     name: weather-forecast-learning-database
     organizationRef:
       name: weather-forecast

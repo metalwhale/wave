@@ -5,6 +5,7 @@ metadata:
   name: whirlpool
   labels:
     name: whirlpool
+    whirlpool/role: system
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application

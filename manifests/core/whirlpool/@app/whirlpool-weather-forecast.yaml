@@ -1,4 +1,12 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: whirlpool-weather-forecast
+  labels:
+    name: whirlpool-weather-forecast
+    whirlpool/role: app
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
