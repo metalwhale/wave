@@ -72,7 +72,7 @@ spec:
             - name: INFERENCE_PORT
               value: "3000"
             - name: INFERENCE_THREADS
-              value: "6"
+              value: "4"
             - name: INFERENCE_TEMP
               value: "0.4"
           command:
@@ -80,7 +80,7 @@ spec:
           resources:
             limits:
               memory: "12Gi"
-              cpu: "6000m"
+              cpu: "4000m"
           startupProbe:
             httpGet:
               path: /healthz

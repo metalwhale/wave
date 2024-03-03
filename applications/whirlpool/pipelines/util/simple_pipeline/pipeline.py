@@ -42,7 +42,10 @@ def simple_pipeline(config_obj, **inputs):
                     k8s_secret_key_to_env={env["secretKey"]: env["name"]},
                 ))
     # Additional placeholder env vars
+    # See: https://argo-workflows.readthedocs.io/en/latest/variables/
     train_op.container\
+        .add_env_variable(V1EnvVar(name="WP_KFP_RUN_URL", value="https://whirlpool.wave.m-cloud.dev/_/pipeline/?ns={{workflow.namespace}}#/runs/details/{{workflow.uid}}"))\
+        .add_env_variable(V1EnvVar(name="WP_KFP_PROFILE", value="{{workflow.namespace}}"))\
         .add_env_variable(V1EnvVar(name="WP_KFP_RUN_ID", value=kfp.dsl.RUN_ID_PLACEHOLDER))\
         .add_env_variable(V1EnvVar(name="WP_KFP_EXECUTION_ID", value=kfp.dsl.EXECUTION_ID_PLACEHOLDER))
     # Add inputs
