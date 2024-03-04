@@ -8,3 +8,5 @@ resources:
 patches:
   - path: ./grafana.yaml
   - path: ./prometheus.yaml
+  # App
+  - path: ./@app/whirlpool-weather-forecast.yaml

@@ -25,7 +25,7 @@ container:
       value: model_trainer
     - name: WP_INPUT_DATABASE_PASSWORD
       secretName: learning-database
-      secretKey: model_trainer_password # See: `/manifests/core/whirlpool-weather-forecast/secret.yaml` file
+      secretKey: model_trainer_password # See: `/manifests/core/whirlpool-weather-forecast/@base/secret.yaml` file
 
 # Inputs of the pipeline, where `envName` is the name of env var that holds the corresponding value
 runInputs:

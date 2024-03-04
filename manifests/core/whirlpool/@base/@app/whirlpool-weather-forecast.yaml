@@ -19,7 +19,7 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/core/whirlpool-weather-forecast
+    path: manifests/core/whirlpool-weather-forecast/@base
   destination:
     server: https://kubernetes.default.svc
     namespace: whirlpool-weather-forecast
