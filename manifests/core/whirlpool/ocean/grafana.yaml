@@ -2,8 +2,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: whirlpool
+  name: whirlpool--grafana
   namespace: argocd
 spec:
   source:
-    path: manifests/core/whirlpool/ocean
+    path: manifests/core/whirlpool/ocean/grafana
