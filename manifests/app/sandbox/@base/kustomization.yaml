@@ -12,8 +12,6 @@ helmCharts:
       service:
         type: NodePort
         nodePort: 31000
-      persistentVolume:
-        storageClass: local-storage
 
 resources:
   - app.yaml

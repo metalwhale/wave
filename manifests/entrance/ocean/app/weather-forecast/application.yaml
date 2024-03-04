@@ -6,4 +6,4 @@ metadata:
   namespace: argocd
 spec:
   source:
-    path: manifests/app/weather-forecast
+    path: manifests/app/weather-forecast/ocean

@@ -1,0 +1,17 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: coral
+spec:
+  instances: 3
+  storage:
+    size: 48Gi
+    resizeInUseVolumes: false # See: https://cloudnative-pg.io/documentation/1.20/storage/#recreating-storage
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+  postgresql:
+    parameters:
+      timezone: "Asia/Tokyo"

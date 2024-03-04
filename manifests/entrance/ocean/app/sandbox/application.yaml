@@ -6,4 +6,4 @@ metadata:
   namespace: argocd
 spec:
   source:
-    path: manifests/app/sandbox
+    path: manifests/app/sandbox/ocean
