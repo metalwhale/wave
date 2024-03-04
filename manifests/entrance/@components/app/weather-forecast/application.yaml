@@ -33,7 +33,7 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/app/weather-forecast
+    path: manifests/app/weather-forecast/@base
   destination:
     server: https://kubernetes.default.svc
     namespace: weather-forecast

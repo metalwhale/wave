@@ -2,15 +2,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: whirlpool
+  name: external-secrets
   labels:
-    name: whirlpool
-    whirlpool/role: system
+    name: external-secrets
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: whirlpool
+  name: external-secrets
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -19,13 +18,11 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/core/whirlpool
+    path: manifests/core/external-secrets/@base
   destination:
     server: https://kubernetes.default.svc
-    namespace: whirlpool
+    namespace: external-secrets
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - FailOnSharedResource=true

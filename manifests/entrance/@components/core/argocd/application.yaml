@@ -1,15 +1,8 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: newswaters
-  labels:
-    name: newswaters
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: newswaters
+  name: argocd
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -18,16 +11,11 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/app/newswaters
+    path: manifests/core/argocd/@base
   destination:
     server: https://kubernetes.default.svc
-    namespace: newswaters
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-  ignoreDifferences:
-    - group: admissionregistration.k8s.io
-      kind: "*"
-      jqPathExpressions:
-        - .webhooks[].clientConfig.caBundle

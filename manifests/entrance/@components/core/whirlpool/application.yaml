@@ -2,14 +2,15 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: tembo
+  name: whirlpool
   labels:
-    name: tembo
+    name: whirlpool
+    whirlpool/role: system
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: tembo
+  name: whirlpool
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -18,18 +19,13 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/core/tembo
+    path: manifests/core/whirlpool/@base
   destination:
     server: https://kubernetes.default.svc
-    namespace: tembo
+    namespace: whirlpool
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-  ignoreDifferences:
-    - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: coredbs.coredb.io
-      jqPathExpressions:
-        - .spec.names.categories
-        - .spec.versions[].additionalPrinterColumns
+    syncOptions:
+      - FailOnSharedResource=true

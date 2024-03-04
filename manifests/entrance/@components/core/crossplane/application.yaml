@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: external-secrets
+  name: crossplane
   labels:
-    name: external-secrets
+    name: crossplane
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: external-secrets
+  name: crossplane
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -18,10 +18,10 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/core/external-secrets
+    path: manifests/core/crossplane/@base
   destination:
     server: https://kubernetes.default.svc
-    namespace: external-secrets
+    namespace: crossplane
   syncPolicy:
     automated:
       prune: true

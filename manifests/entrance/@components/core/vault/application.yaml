@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: sandbox
+  name: vault
   labels:
-    name: sandbox
+    name: vault
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sandbox
+  name: vault
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -18,11 +18,16 @@ spec:
   source:
     repoURL: https://github.com/metalwhale/wave.git
     targetRevision: HEAD
-    path: manifests/app/sandbox
+    path: manifests/core/vault/@base
   destination:
     server: https://kubernetes.default.svc
-    namespace: sandbox
+    namespace: vault
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: "*"
+      jqPathExpressions:
+        - .webhooks[].clientConfig.caBundle
