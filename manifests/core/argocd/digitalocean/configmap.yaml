@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  # See: https://argo-cd.readthedocs.io/en/release-2.9/user-guide/kustomize/#kustomizing-helm-charts
+  kustomize.buildOptions: --enable-helm
+  # See: https://github.com/argoproj/argo-cd/issues/10456#issuecomment-1249381338
+  resource.exclusions: |
+    - apiGroups:
+      - cilium.io
+      kinds:
+      - CiliumIdentity
+      clusters:
+      - "*"
+---
+# See: https://argo-cd.readthedocs.io/en/release-2.9/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+data:
+  server.insecure: "true"
+  server.rootpath: "/argocd"

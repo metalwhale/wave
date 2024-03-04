@@ -1,0 +1,23 @@
+---
+# See:
+# - https://argo-cd.readthedocs.io/en/release-2.9/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller
+# - https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  namespace: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /argocd # See: `./configmap.yaml` file
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  name: http
