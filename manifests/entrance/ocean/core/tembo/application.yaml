@@ -6,4 +6,4 @@ metadata:
   namespace: argocd
 spec:
   source:
-    path: manifests/core/tembo
+    path: manifests/core/tembo/ocean

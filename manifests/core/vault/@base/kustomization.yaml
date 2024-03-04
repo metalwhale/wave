@@ -9,9 +9,6 @@ helmCharts:
     namespace: vault
     releaseName: clam
     valuesInline:
-      server:
-        dataStorage:
-          storageClass: local-storage
       ui:
         enabled: "true"
         serviceType: NodePort
