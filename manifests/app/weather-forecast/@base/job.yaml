@@ -1,0 +1,84 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-migration
+spec:
+  template:
+    spec:
+      containers:
+        # See: https://github.com/metalwhale/weather-forecast/tree/main/weather-forecast-job
+        - name: job-migration
+          image: metalwhaledev/weather-forecast-job:0.1.0
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_HOST
+              value: learning-database-rw
+            - name: DATABASE_DB
+              value: app
+            - name: DATABASE_USER
+              value: app
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: learning-database-app
+                  key: password
+            - name: DATABASE_URL
+              value: "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST)/$(DATABASE_DB)"
+          command:
+            - diesel
+            - migration
+            - run
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "125m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+      restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-collect-daily-records
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "0 * * * *" # Daily job but running on an hourly basis to collect data as soon as possible
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            # See: https://github.com/metalwhale/weather-forecast/tree/main/weather-forecast-job
+            - name: job-collect-daily-records
+              image: metalwhaledev/weather-forecast-job:0.1.0
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_HOST
+                  value: learning-database-rw
+                - name: DATABASE_DB
+                  value: app
+                - name: DATABASE_USER
+                  value: app
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: learning-database-app
+                      key: password
+              command:
+                - weather-forecast-job
+                - collect-daily-records
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "125m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "250m"
+              securityContext:
+                runAsUser: 1000
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1
