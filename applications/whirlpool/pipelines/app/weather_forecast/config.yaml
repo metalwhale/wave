@@ -9,12 +9,13 @@ container:
   image: metalwhaledev/weather-forecast-model-trainer:0.1.0
 
   # `{ outputPath: output_path }` is a placeholder, defines a dir path that the trainer program should write the output files into
-  command: [python3, /usr/src/trainer.py, { outputPath: output_path }]
+  command: [python3, -m, trainer, { outputPath: output_path }]
 
   # Environment variables (optional)
+  # About the names of `env`, see https://github.com/metalwhale/weather-forecast-model repo.
+  # About the values or secrets of `env`, see `/manifests/app/weather-forecast` dir of this repo.
   env:
-    # About the names of `env`, see https://github.com/metalwhale/weather-forecast-model repo.
-    # About the values or secrets of `env`, see `/manifests/app/weather-forecast` dir of this repo.
+    # Inputs
     - name: WP_INPUT_DATABASE_HOST
       value: learning-database-r.weather-forecast
     - name: WP_INPUT_DATABASE_PORT
@@ -26,6 +27,9 @@ container:
     - name: WP_INPUT_DATABASE_PASSWORD
       secretName: learning-database
       secretKey: model_trainer_password # See: `/manifests/core/whirlpool-weather-forecast/@base/secret.yaml` file
+    # Tracking
+    - name: WP_AIM_REPO
+      value: aim://tracking-server.weather-forecast:53800 # See `/manifests/app/weather-forecast/@base/tracking.yaml` file
 
 # Inputs of the pipeline, where `envName` is the name of env var that holds the corresponding value
 runInputs:

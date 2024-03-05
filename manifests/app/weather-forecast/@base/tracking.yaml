@@ -1,0 +1,133 @@
+# See: https://aimstack.readthedocs.io/en/v3.17.5/using/k8s_deployment.html
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tracking-repo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracking-web-ui
+  labels:
+    app: tracking-web-ui
+spec:
+  selector:
+    matchLabels:
+      app: tracking-web-ui
+  template:
+    metadata:
+      labels:
+        app: tracking-web-ui
+    spec:
+      containers:
+        - name: tracking-web-ui
+          image: metalwhaledev/aimstack-aim:3.17.5 # See: `/.github/workflows/aimstack-aim.yml` file
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            # Use `yes` command to response to the prompt
+            #   "'/aim' is not a valid Aim repository. Do you want to initialize it? [y/N]:"
+            - "yes | aim up --host 0.0.0.0 --port 43800 --repo /aim"
+          ports:
+            - containerPort: 43800
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+            - mountPath: /aim
+              name: tracking-repo
+      volumes:
+        - name: tracking-repo
+          persistentVolumeClaim:
+            claimName: tracking-repo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracking-web-ui
+spec:
+  ports:
+    - protocol: TCP
+      port: 43800
+      targetPort: 43800
+  selector:
+    app: tracking-web-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracking-server
+  labels:
+    app: tracking-server
+spec:
+  selector:
+    matchLabels:
+      app: tracking-server
+  template:
+    metadata:
+      labels:
+        app: tracking-server
+    spec:
+      containers:
+        - name: tracking-server
+          image: metalwhaledev/aimstack-aim:3.17.5 # See: `/.github/workflows/aimstack-aim.yml` file
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - "aim server --host 0.0.0.0 --port 53800 --repo /aim"
+          ports:
+            - containerPort: 53800
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+            - mountPath: /aim
+              name: tracking-repo
+      volumes:
+        - name: tracking-repo
+          persistentVolumeClaim:
+            claimName: tracking-repo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracking-server
+spec:
+  ports:
+    - protocol: TCP
+      port: 53800
+      targetPort: 53800
+  selector:
+    app: tracking-server
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-whirlpool-weather-forecast-to-tracking-server
+spec:
+  podSelector:
+    matchLabels:
+      app: tracking-server
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: whirlpool-weather-forecast
+      ports:
+        - protocol: TCP
+          port: 53800
