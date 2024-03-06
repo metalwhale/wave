@@ -5,6 +5,7 @@ components:
   # Core
   - ../@components/core/argocd
   - ../@components/core/ingress-nginx
+  - ../@components/core/cert-manager
   # App
   - ../@components/app/sandbox
 
@@ -12,5 +13,6 @@ patches:
   # Core
   - path: ./core/argocd/application.yaml
   - path: ./core/ingress-nginx/application.yaml
+  - path: ./core/cert-manager/application.yaml
   # App
   - path: ./app/sandbox/application.yaml
