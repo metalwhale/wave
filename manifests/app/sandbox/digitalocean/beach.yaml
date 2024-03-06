@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beach
+  labels:
+    app: beach
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: beach
+  template:
+    metadata:
+      labels:
+        app: beach
+    spec:
+      containers:
+        - name: beach
+          image: ubuntu:22.04
+          resources:
+            requests:
+              memory: "1.2Gi"
+              cpu: "2000m"
+            limits:
+              memory: "2.4Gi"
+              cpu: "4000m"
+          stdin: true
+          tty: true

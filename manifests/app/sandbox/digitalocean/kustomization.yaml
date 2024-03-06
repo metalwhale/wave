@@ -4,3 +4,4 @@ namespace: sandbox
 
 resources:
   - ../@base
+  - ./beach.yaml
