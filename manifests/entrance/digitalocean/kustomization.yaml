@@ -6,6 +6,7 @@ components:
   - ../@components/core/argocd
   - ../@components/core/ingress-nginx
   - ../@components/core/cert-manager
+  - ../@components/core/whirlpool
   # App
   - ../@components/app/sandbox
 
@@ -14,5 +15,6 @@ patches:
   - path: ./core/argocd/application.yaml
   - path: ./core/ingress-nginx/application.yaml
   - path: ./core/cert-manager/application.yaml
+  - path: ./core/whirlpool/application.yaml
   # App
   - path: ./app/sandbox/application.yaml

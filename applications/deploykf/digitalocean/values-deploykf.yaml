@@ -1,0 +1,116 @@
+deploykf_dependencies:
+  cert_manager:
+    enabled: false
+    clusterIssuer:
+      issuerName: letsencrypt-prod # See `/manifests/core/cert-manager/digitalocean/issuer.yaml` file
+deploykf_core:
+  deploykf_istio_gateway:
+    extraManifests:
+      # See: https://www.deploykf.org/guides/platform/deploykf-gateway/#expose-with-kubernetes-ingress, "Nginx Ingress"
+      - |
+        apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          name: deploykf-gateway
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        spec:
+          ingressClassName: nginx
+          tls:
+            - hosts:
+                - deploykf.whirlpool.wave.metalwhale.dev
+                - minio-api.deploykf.whirlpool.wave.metalwhale.dev
+                - minio-console.deploykf.whirlpool.wave.metalwhale.dev
+              secretName: deploykf-gateway-tls
+          rules:
+            - host: "deploykf.whirlpool.wave.metalwhale.dev"
+              http:
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                      service:
+                        name: deploykf-gateway
+                        port:
+                          name: http
+            - host: "*.deploykf.whirlpool.wave.metalwhale.dev"
+              http:
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                      service:
+                        name: deploykf-gateway
+                        port:
+                          name: http
+    gateway:
+      hostname: deploykf.whirlpool.wave.metalwhale.dev
+      tls:
+        enabled: false # Disable for the sake of simplicity
+    gatewayService:
+      type: ClusterIP # Use ingress nginx for external access
+  deploykf_profiles_generator:
+    users:
+      - id: whale # admin
+        email: "whale@metalwhale.dev"
+      - id: ziphius # machine
+        email: "ziphius@metalwhale.dev"
+      - id: dolphin
+        email: "dolphin@metalwhale.dev"
+      - id: humpback
+        email: "humpback@metalwhale.dev"
+      - id: orca
+        email: "orca@metalwhale.dev"
+    groups:
+      - id: lobtail
+        users:
+          - ziphius
+          - humpback
+      - id: weather-forecast
+        users:
+          - ziphius
+          - orca
+    profiles:
+      - name: whirlpool-weather-forecast
+        members:
+          - group: weather-forecast
+            access:
+              role: edit
+              notebooksAccess: true
+      - name: whirlpool-lobtail
+        members:
+          - group: lobtail
+            access:
+              role: edit
+              notebooksAccess: true
+    profileDefaults:
+      ownerEmail: "whale@metalwhale.dev"
+  deploykf_auth:
+    dex:
+      staticPasswords:
+        - email: "whale@metalwhale.dev"
+          password:
+            value: "$2y$10$jYppL1gAPMzrak.bNaMnseZlsH5H7WYXdIZPZunCRQc2sb6A5RFIa"
+            type: "hash"
+        - email: "ziphius@metalwhale.dev"
+          password:
+            value: "$2y$10$roW5cm//sNVTHSUSGaGiR.GDjyBN5THUV/M/Ir0Sslb9DlYT7j8Fq"
+            type: "hash"
+        - email: "dolphin@metalwhale.dev"
+          password:
+            value: "$2y$10$lNkeDskkgFz6uCtMMjXcJutatY6wofU15LKbsL8iaJKYlIq0KRrvG"
+            type: "hash"
+        - email: "humpback@metalwhale.dev"
+          password:
+            value: "$2y$10$m07JuNV4TRHoBigTHsJ9Fez4AyzYqurlIf6N4jStlfsTcaZmXxnaK"
+            type: "hash"
+        - email: "orca@metalwhale.dev"
+          password:
+            value: "$2y$10$rXQHUOmDCENkKlijHo/H/u59jbr.dQ/ykKHG65qFrZChn7XYy1S8C"
+            type: "hash"
+# See: https://www.deploykf.org/guides/getting-started/#kubernetes-configurations
+deploykf_opt:
+  deploykf_minio:
+    enabled: true
+  deploykf_mysql:
+    enabled: true

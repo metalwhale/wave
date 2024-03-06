@@ -1,0 +1,6 @@
+argocd:
+  source:
+    repo:
+      url: https://github.com/metalwhale/wave
+      revision: main
+      path: ./manifests/core/whirlpool/digitalocean/deploykf
