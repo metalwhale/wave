@@ -1,0 +1,75 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: deploykf-gateway
+  namespace: deploykf-istio-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - deploykf.whirlpool.wave.metalwhale.dev
+      secretName: deploykf-gateway-tls
+  rules:
+    - host: "deploykf.whirlpool.wave.metalwhale.dev"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: deploykf-gateway
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-api-deploykf-gateway
+  namespace: deploykf-istio-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - minio-api.deploykf.whirlpool.wave.metalwhale.dev
+      secretName: minio-api-deploykf-gateway-tls
+  rules:
+    - host: "minio-api.deploykf.whirlpool.wave.metalwhale.dev"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: deploykf-gateway
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-console-deploykf-gateway
+  namespace: deploykf-istio-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - minio-console.deploykf.whirlpool.wave.metalwhale.dev
+      secretName: minio-console-deploykf-gateway-tls
+  rules:
+    - host: "minio-console.deploykf.whirlpool.wave.metalwhale.dev"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: deploykf-gateway
+                port:
+                  name: http
