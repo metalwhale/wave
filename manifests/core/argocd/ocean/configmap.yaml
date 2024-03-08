@@ -16,12 +16,3 @@ data:
         - CiliumIdentity
       clusters:
         - "*"
----
-# See: https://argo-cd.readthedocs.io/en/release-2.9/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: argocd-cmd-params-cm
-data:
-  server.insecure: "true"
-  server.rootpath: "/"

@@ -8,6 +8,7 @@ components:
   - ../@components/core/vault
   - ../@components/core/tembo
   - ../@components/core/crossplane
+  - ../@components/core/cilium
   - ../@components/core/whirlpool
   # App
   - ../@components/app/newswaters
@@ -26,6 +27,7 @@ patches:
   - path: ./core/vault/application.yaml
   - path: ./core/tembo/application.yaml
   - path: ./core/crossplane/application.yaml
+  - path: ./core/cilium/application.yaml
   - path: ./core/whirlpool/application.yaml
   # App
   - path: ./app/newswaters/application.yaml
