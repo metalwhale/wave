@@ -112,22 +112,3 @@ spec:
       targetPort: 53800
   selector:
     app: tracking-server
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-ingress-from-whirlpool-weather-forecast-to-tracking-server
-spec:
-  podSelector:
-    matchLabels:
-      app: tracking-server
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              name: whirlpool-weather-forecast
-      ports:
-        - protocol: TCP
-          port: 53800

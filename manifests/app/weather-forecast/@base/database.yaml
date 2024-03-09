@@ -16,23 +16,3 @@ spec:
   postgresql:
     parameters:
       timezone: "Asia/Tokyo"
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-ingress-from-whirlpool-to-learning-database
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: learning-database
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchExpressions:
-              - key: whirlpool/role
-                operator: Exists
-      ports:
-        - protocol: TCP
-          port: 5432
