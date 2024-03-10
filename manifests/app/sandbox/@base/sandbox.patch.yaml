@@ -11,16 +11,6 @@ spec:
     metadata:
       labels:
         app: sandbox
-      annotations:
-        # See: ./README.md
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "sandbox-app"
-        vault.hashicorp.com/agent-inject-secret-.env: "clam/data/sandbox"
-        vault.hashicorp.com/agent-inject-template-.env: |
-          {{- with secret "clam/data/sandbox" -}}
-          SHELL={{ .Data.data.shell }}
-          PEARL={{ .Data.data.pearl }}
-          {{- end }}
     spec:
       serviceAccountName: sandbox-app
       containers:
