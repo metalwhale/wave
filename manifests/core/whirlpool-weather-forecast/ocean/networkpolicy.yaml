@@ -1,0 +1,38 @@
+---
+# See: https://doc.crds.dev/github.com/cilium/cilium/cilium.io/CiliumNetworkPolicy/v2@1.15.1
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: notebook
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: notebook-name
+        operator: Exists
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": istio-system
+            "k8s:app": istiod
+      toPorts:
+        - ports:
+            - port: "15012"
+              protocol: TCP
+    - toCIDR:
+        # IP address of `node-local-dns`.
+        # See: https://github.com/metalwhale/ocean/blob/e7645d1/kubernetes/inventory/group_vars/k8s_cluster/k8s-cluster.yml#L178
+        - 169.254.25.10/32
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "github.com"
+        # For `apt` command
+        - matchPattern: "*.ubuntu.com"
+        # For `pip install` command
+        - matchName: "pypi.org"
+        - matchPattern: "*.pythonhosted.org"
