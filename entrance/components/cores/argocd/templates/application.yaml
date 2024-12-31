@@ -1,0 +1,24 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-argocd
+spec:
+  project: core
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      targetRevision: 7.7.11 # Doc: https://artifacthub.io/packages/helm/argo/argo-cd/7.7.11
+      chart: argo-cd
+      helm:
+        releaseName: argo-cd
+        valuesObject:
+          configs:
+            cm:
+              kustomize.buildOptions: --enable-helm # Doc: https://argo-cd.readthedocs.io/en/release-2.13/user-guide/kustomize/#kustomizing-helm-charts
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

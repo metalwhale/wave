@@ -1,0 +1,24 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wave-cores
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: entrance/components/cores/cilium
+      helm:
+        valuesObject:
+          provider: ocean
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: entrance/components/cores/argocd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
