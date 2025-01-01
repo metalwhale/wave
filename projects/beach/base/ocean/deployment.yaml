@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beach
+  labels:
+    app: beach
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beach
+  template:
+    metadata:
+      labels:
+        app: beach
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27.3
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 200m
