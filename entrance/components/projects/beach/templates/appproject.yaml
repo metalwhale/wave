@@ -1,0 +1,16 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.environment }}-beach
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  sourceRepos:
+    - https://github.com/metalwhale/wave.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: {{ .Values.environment }}-beach
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
