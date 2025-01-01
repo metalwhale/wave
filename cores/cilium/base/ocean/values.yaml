@@ -3,3 +3,11 @@ l2announcements:
   # Enable l2 announcement from cilium to replace Metallb
   # Ref: https://github.com/metalwhale/ocean/blob/main/kubernetes/inventory/group_vars/k8s_cluster/k8s-net-cilium.yml
   enabled: true
+# Remember to restart `deployment/cilium-operator` and `ds/cilium` to enable Cilium Gateway API Controller
+# Doc: https://docs.cilium.io/en/v1.16/network/servicemesh/gateway-api/gateway-api/#installation
+gatewayAPI:
+  enabled: true
+nodePort:
+  enabled: true
+# Doc: https://docs.cilium.io/en/v1.16/network/kubernetes/kubeproxy-free/
+kubeProxyReplacement: true
