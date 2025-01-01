@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.environment }}-beach
+  labels:
+    name: {{ .Values.environment }}-beach
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.environment }}-beach
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  sourceRepos:
+    - https://github.com/metalwhale/wave.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: {{ .Values.environment }}-beach
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.environment }}-beach
+spec:
+  project: {{ .Values.environment }}-beach
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: projects/beach/overlays/{{ .Values.environment }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.environment }}-beach
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
