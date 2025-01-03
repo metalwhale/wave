@@ -24,6 +24,11 @@ spec:
                     - CiliumIdentity
                   clusters:
                     - "*"
+            params:
+              server.insecure: true # Avoid redirecting to https since we only use http
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/argocd/overlays/{{ .Values.environment }}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

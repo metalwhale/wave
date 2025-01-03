@@ -3,12 +3,35 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: global
+  annotations:
+    # Doc:
+    # - https://cert-manager.io/v1.16-docs/usage/gateway/
+    # - https://cert-manager.io/v1.16-docs/configuration/acme/http01/#configuring-the-http-01-gateway-api-solver
+    # Note: These URLs doesn't exist yet, we should use the latest version
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   gatewayClassName: cilium
+  # HTTP listeners are mainly used for HTTP-01 challenge
+  # Doc: https://letsencrypt.org/docs/challenge-types/#http-01-challenge
   listeners:
-    - protocol: HTTP
+    ##########
+    # argocd
+    ##########
+    - name: argocd-http
+      hostname: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+      protocol: HTTP
       port: 80
-      name: http
       allowedRoutes:
         namespaces:
           from: All
+    - name: argocd-https
+      hostname: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: argocd-server-tls

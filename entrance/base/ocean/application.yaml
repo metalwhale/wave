@@ -10,6 +10,7 @@ spec:
     - https://github.com/metalwhale/wave.git
     - https://helm.cilium.io/ # `cilium` core
     - https://argoproj.github.io/argo-helm # `argocd` core
+    - https://charts.jetstack.io # `cert-manager` core
   destinations:
     - server: https://kubernetes.default.svc
       namespace: "*"
@@ -34,6 +35,15 @@ spec:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/argocd/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/cert-manager/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/global/source
