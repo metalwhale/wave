@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: core-global-config
+data:
+  hostname.argocd: argocd.wave.metalwhale.dev
