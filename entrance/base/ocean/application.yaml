@@ -18,6 +18,12 @@ spec:
       path: entrance/components/cores/argocd
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
+      path: entrance/components/cores/cert-manager
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Replaced later. Ref: `/entrance/overlays/${ENVIRONMENT}/kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
       path: entrance/components/cores/global
       helm:
         valuesObject:

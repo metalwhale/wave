@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-cert-manager
+  labels:
+    name: core-cert-manager
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-cert-manager
+spec:
+  project: core
+  sources:
+    - repoURL: https://charts.jetstack.io
+      targetRevision: 1.16.2 # Doc: https://artifacthub.io/packages/helm/cert-manager/cert-manager/1.16.2
+      chart: cert-manager
+      helm:
+        releaseName: cert-manager
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/cert-manager/overlays/{{ .Values.environment }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: core-cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

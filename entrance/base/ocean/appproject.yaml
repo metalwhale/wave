@@ -10,6 +10,7 @@ spec:
     - https://github.com/metalwhale/wave.git
     - https://helm.cilium.io/ # `cilium` core
     - https://argoproj.github.io/argo-helm # `argocd` core
+    - https://charts.jetstack.io # `cert-manager` core
   destinations:
     - server: https://kubernetes.default.svc
       namespace: "*"
