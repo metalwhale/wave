@@ -11,6 +11,7 @@ spec:
     - https://helm.cilium.io/ # `cilium` core
     - https://argoproj.github.io/argo-helm # `argocd` core
     - https://charts.jetstack.io # `cert-manager` core
+    - https://github.com/rancher/local-path-provisioner.git # `local-path-provisioner` core
   destinations:
     - server: https://kubernetes.default.svc
       namespace: "*"
@@ -44,6 +45,9 @@ spec:
       helm:
         valuesObject:
           environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/local-path-provisioner/source
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/global/source
