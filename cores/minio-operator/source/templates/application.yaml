@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-minio-operator
+  labels:
+    name: core-minio-operator
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-minio-operator
+spec:
+  project: core
+  sources:
+    - repoURL: https://operator.min.io/ # Doc: https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-operator-helm.html#install-the-minio-operator-using-helm-charts
+      targetRevision: 6.0.4 # Doc: https://github.com/minio/operator/tree/v6.0.4/helm/operator
+      chart: operator
+      helm:
+        releaseName: minio-operator
+        valuesObject:
+          operator:
+            env:
+              - name: OPERATOR_STS_AUTO_TLS_ENABLED # Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-operator.html#install-operator-with-auto-tls-disabled
+                value: "off"
+              - name: OPERATOR_STS_ENABLED
+                value: "on"
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/minio-operator/overlays/{{ .Values.environment }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: core-minio-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
