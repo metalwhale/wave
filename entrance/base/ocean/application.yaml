@@ -12,6 +12,7 @@ spec:
     - https://argoproj.github.io/argo-helm # `argocd` core
     - https://charts.jetstack.io # `cert-manager` core
     - https://github.com/rancher/local-path-provisioner.git # `local-path-provisioner` core
+    - https://bitnami-labs.github.io/sealed-secrets # `sealed-secrets` core
   destinations:
     - server: https://kubernetes.default.svc
       namespace: "*"
@@ -48,6 +49,9 @@ spec:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/local-path-provisioner/source
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/sealed-secrets/source
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/global/source
