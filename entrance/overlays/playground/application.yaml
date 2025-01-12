@@ -8,6 +8,12 @@ spec:
   sources:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
+      path: projects/archaist-minio/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `./kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
       path: projects/beach/source
       helm:
         valuesObject:
