@@ -1,0 +1,38 @@
+---
+# Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-tenants.html#create-the-tenant-namespace-ca-issuer
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: archaist-minio-ca-certificate
+spec:
+  isCA: true
+  commonName: archaist-minio-ca
+  secretName: archaist-minio-ca-tls
+  duration: 70128h # 8y
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-root
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+# Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-tenants.html#create-the-issuer
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: archaist-minio-ca-issuer
+spec:
+  ca:
+    secretName: archaist-minio-ca-tls
+---
+# Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-tenants.html#create-a-certificate-for-the-tenant
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tenant-certmanager-cert
+spec:
+  dnsNames: [] # Ref: `../../overlays/${environment}/certificate_patch.yaml` file
+  secretName: archaist-tls
+  issuerRef:
+    name: archaist-minio-ca-issuer
