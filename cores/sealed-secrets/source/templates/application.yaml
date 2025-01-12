@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-sealed-secrets
+  labels:
+    name: core-sealed-secrets
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-sealed-secrets
+spec:
+  project: core
+  sources:
+    - repoURL: https://bitnami-labs.github.io/sealed-secrets
+      targetRevision: 2.17.0 # Doc: https://artifacthub.io/packages/helm/bitnami-labs/sealed-secrets/2.17.0
+      chart: sealed-secrets
+      helm:
+        releaseName: sealed-secrets
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: core-sealed-secrets
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
