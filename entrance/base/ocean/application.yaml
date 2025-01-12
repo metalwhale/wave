@@ -13,6 +13,7 @@ spec:
     - https://charts.jetstack.io # `cert-manager` core
     - https://github.com/rancher/local-path-provisioner.git # `local-path-provisioner` core
     - https://bitnami-labs.github.io/sealed-secrets # `sealed-secrets` core
+    - https://operator.min.io/ # `minio-operator` core
   destinations:
     - server: https://kubernetes.default.svc
       namespace: "*"
@@ -52,6 +53,12 @@ spec:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/sealed-secrets/source
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/minio-operator/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/global/source
