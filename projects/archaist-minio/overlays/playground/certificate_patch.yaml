@@ -1,0 +1,14 @@
+---
+# Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-tenants.html#create-a-certificate-for-the-tenant
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tenant-certmanager-cert
+spec:
+  dnsNames:
+    - "minio.playground-archaist-minio"
+    - "minio.playground-archaist-minio.svc"
+    - "minio.playground-archaist-minio.svc.cluster.local"
+    - "*.minio.playground-archaist-minio.svc.cluster.local"
+    - "*.archaist-hl.playground-archaist-minio.svc.cluster.local"
+    - "*.archaist.minio.playground-archaist-minio.svc.cluster.local"
