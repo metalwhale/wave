@@ -16,6 +16,14 @@ spec:
     name: selfsigned-root
     kind: ClusterIssuer
     group: cert-manager.io
+  secretTemplate:
+    annotations:
+      # Doc:
+      # - https://cert-manager.io/v1.16-docs/devops-tips/syncing-secrets-across-namespaces/#using-reflector
+      # Note: These URLs doesn't exist yet, we should use the latest version
+      # TODO: Reflect only `ca.crt` key, not the entire data
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "core-minio-operator"
 ---
 # Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-tenants.html#create-the-issuer
 apiVersion: cert-manager.io/v1
