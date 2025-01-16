@@ -6,4 +6,4 @@ resources:
   - ./sealedsecret.yaml
 
 patches:
-  - path: ./certificate_patch.yaml
+  - path: ./httproute_patch.yaml

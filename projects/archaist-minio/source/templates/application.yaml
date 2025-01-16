@@ -67,14 +67,7 @@ spec:
                   seccompProfile:
                     type: RuntimeDefault
             certificate:
-              # Doc: https://min.io/docs/minio/kubernetes/upstream/operations/cert-manager/cert-manager-tenants.html#deploy-the-tenant-using-cert-manager-for-tls-certificate-management
               requestAutoCert: false
-              externalCaCertSecret:
-                - name: archaist-minio-ca-tls
-                  type: cert-manager.io/v1
-              externalCertSecret:
-                - name: archaist-tls
-                  type: cert-manager.io/v1
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: projects/archaist-minio/overlays/{{ .Values.environment }}

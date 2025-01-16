@@ -35,3 +35,24 @@ spec:
         mode: Terminate
         certificateRefs:
           - name: argocd-server-tls
+    ##################
+    # archaist-minio
+    ##################
+    - name: archaist-minio-http
+      hostname: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: archaist-minio-https
+      hostname: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: archaist-minio-server-tls
