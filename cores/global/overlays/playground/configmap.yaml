@@ -5,3 +5,4 @@ metadata:
   name: core-global-config
 data:
   hostname.argocd: argocd.wave.metalwhale.dev
+  hostname.archaist.minio: minio.archaist.wave.metalwhale.dev
