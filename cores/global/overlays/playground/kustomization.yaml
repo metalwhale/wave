@@ -29,3 +29,13 @@ replacements:
           name: global
         fieldPaths:
           - spec.listeners.[name=archaist-minio-.*].hostname
+  - source:
+      kind: ConfigMap
+      name: core-global-config
+      fieldPath: data.[hostname.chloria.minio]
+    targets:
+      - select:
+          kind: Gateway
+          name: global
+        fieldPaths:
+          - spec.listeners.[name=chloria-minio-.*].hostname
