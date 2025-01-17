@@ -6,3 +6,4 @@ metadata:
 data:
   hostname.argocd: argocd.wave.metalwhale.dev
   hostname.archaist.minio: minio.archaist.wave.metalwhale.dev
+  hostname.chloria.minio: minio.chloria.wave.metalwhale.dev
