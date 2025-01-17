@@ -56,3 +56,24 @@ spec:
         mode: Terminate
         certificateRefs:
           - name: archaist-minio-server-tls
+    #################
+    # chloria-minio
+    #################
+    - name: chloria-minio-http
+      hostname: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: chloria-minio-https
+      hostname: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: chloria-minio-server-tls

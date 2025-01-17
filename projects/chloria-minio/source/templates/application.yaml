@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.environment }}-chloria-minio
+  labels:
+    name: {{ .Values.environment }}-chloria-minio
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.environment }}-chloria-minio
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  sourceRepos:
+    - https://operator.min.io/
+    - https://github.com/metalwhale/wave.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: {{ .Values.environment }}-chloria-minio
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.environment }}-chloria-minio
+spec:
+  project: {{ .Values.environment }}-chloria-minio
+  sources:
+    - repoURL: https://operator.min.io/ # Doc: https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-minio-tenant-helm.html#deploy-a-minio-tenant-using-helm-charts
+      targetRevision: 6.0.4 # Doc: https://github.com/minio/operator/tree/v6.0.4/helm/tenant
+      chart: tenant
+      helm:
+        releaseName: chloria-minio-tenant
+        valuesObject:
+          tenant:
+            name: chloria
+            configuration:
+              name: chloria-env-configuration
+            configSecret:
+              accessKey: ""
+              secretKey: ""
+              existingSecret: true
+            pools:
+              - servers: 2
+                name: primary
+                volumesPerServer: 2
+                size: 10Gi
+                storageClassName: local-path
+                securityContext:
+                  runAsUser: 1000
+                  runAsGroup: 1000
+                  fsGroup: 1000
+                  fsGroupChangePolicy: "OnRootMismatch"
+                  runAsNonRoot: true
+                containerSecurityContext:
+                  runAsUser: 1000
+                  runAsGroup: 1000
+                  runAsNonRoot: true
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                  seccompProfile:
+                    type: RuntimeDefault
+            certificate:
+              requestAutoCert: false
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: projects/chloria-minio/overlays/{{ .Values.environment }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.environment }}-chloria-minio
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
