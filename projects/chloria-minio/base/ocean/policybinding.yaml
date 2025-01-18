@@ -1,0 +1,13 @@
+---
+# See: https://github.com/minio/operator/blob/v6.0.4/examples/kustomization/sts-example/sample-data/mc-job-policy-binding.yaml
+apiVersion: sts.min.io/v1beta1
+kind: PolicyBinding
+metadata:
+  name: mc-job
+spec:
+  application:
+    namespace: PLACEHOLDER # Ref: `../../source/templates/application.yaml` file
+    serviceaccount: mc-job
+  policies:
+    # Doc: https://min.io/docs/minio/linux/administration/identity-access-management/policy-based-access-control.html
+    - consoleAdmin
