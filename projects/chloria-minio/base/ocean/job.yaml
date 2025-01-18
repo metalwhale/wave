@@ -1,0 +1,37 @@
+---
+# TODO: Find a declarative method
+# See: https://github.com/minio/operator/blob/v6.0.4/examples/kustomization/sts-example/sample-data/mc-job-setup-bucket.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup-origin-bucket
+spec:
+  backoffLimit: 10
+  template:
+    spec:
+      serviceAccountName: mc-job
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: quay.io/minio/mc:RELEASE.2024-10-02T08-27-28Z
+          command: ["/bucket-config/setup.sh"]
+          env:
+            - name: MC_HOST_chloria
+              value: http://minio
+            - name: MC_WEB_IDENTITY_TOKEN_FILE_chloria
+              value: /var/run/secrets/kubernetes.io/serviceaccount/token
+            # New env vars will be appended here. Ref: `../../source/templates/application.yaml` file
+          volumeMounts:
+            - name: operator-ca-tls
+              mountPath: /root/.mc/certs/CAs/operator.crt # Doc: https://min.io/docs/minio/linux/reference/minio-mc.html#certificates
+              subPath: ca.crt
+            - name: bucket-config
+              mountPath: /bucket-config/
+      volumes:
+        - name: operator-ca-tls
+          secret:
+            secretName: operator-ca-tls
+        - name: bucket-config
+          configMap:
+            name: origin-bucket
+            defaultMode: 0744
