@@ -3,3 +3,8 @@ kind: Kustomization
 
 resources:
   - ./httproute.yaml
+  - ./secret.yaml
+  - ./serviceaccount.yaml
+  - ./policybinding.yaml
+  - ./configmap.yaml
+  - ./job.yaml

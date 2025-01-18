@@ -14,6 +14,7 @@ spec:
     - https://github.com/rancher/local-path-provisioner.git # `local-path-provisioner` core
     - https://bitnami-labs.github.io/sealed-secrets # `sealed-secrets` core
     - https://operator.min.io/ # `minio-operator` core
+    - https://emberstack.github.io/helm-charts # `reflector` core
   destinations:
     - server: https://kubernetes.default.svc
       namespace: "*"
@@ -59,6 +60,9 @@ spec:
       helm:
         valuesObject:
           environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/reflector/source
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/global/source

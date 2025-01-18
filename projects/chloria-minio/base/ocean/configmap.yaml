@@ -1,0 +1,28 @@
+---
+# See: https://github.com/minio/operator/blob/v6.0.4/examples/kustomization/sts-example/sample-data/mc-job-setup-bucket.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: origin-bucket
+data:
+  # `chloria` is the alias name. Ref: `./job.yaml` file, `setup-origin-bucket` job
+  setup.sh: |
+    #!/bin/bash
+    mc mb chloria/origin -p && \
+    mc admin policy create chloria origin-full /bucket-config/bucket-policy.json
+  bucket-policy.json: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:*"
+          ],
+          "Resource": [
+            "arn:aws:s3:::origin",
+            "arn:aws:s3:::origin/*"
+          ]
+        }
+      ]
+    }
