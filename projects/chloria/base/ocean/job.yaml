@@ -1,0 +1,39 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migration
+spec:
+  template:
+    spec:
+      containers:
+        # Ref: https://github.com/metalwhale/chloria/blob/main/.github/workflows/migration.yml
+        - name: migration
+          image: metalwhaledev/chloria-migration:0.1.0
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: chloria-cnpg-cluster-init-auth
+                  key: password
+            # More values will be added here. Ref: `../../overlays/${environment}/job_patch.yaml` file
+          command:
+            - diesel
+            - migration
+            - run
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "125m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["all"]
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            runAsNonRoot: true
+      restartPolicy: OnFailure
