@@ -11,3 +11,14 @@ spec:
   policies:
     # Doc: https://min.io/docs/minio/linux/administration/identity-access-management/policy-based-access-control.html
     - consoleAdmin
+---
+apiVersion: sts.min.io/v1beta1
+kind: PolicyBinding
+metadata:
+  name: chloria-backend
+spec:
+  application:
+    namespace: PLACEHOLDER # Ref: `../../overlays/${environment}/policybinding_patch.yaml` file
+    serviceaccount: chloria-backend
+  policies:
+    - origin-full # Ref: `./configmap.yaml` file

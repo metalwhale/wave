@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base/ocean
+  - ./sealedsecret.yaml
 
 patches:
   - target:

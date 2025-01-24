@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/ocean
+  - ./sealedsecret.yaml
+
+patches:
+  - path: ./secret_patch.yaml
+  - target:
+      kind: Job
+      name: migration
+    path: ./job_patch.yaml
+  - target:
+      kind: CronJob
+      name: collect-news
+    path: ./cronjob_patch.yaml
+  - target:
+      kind: Deployment
+      name: chloria-api
+    path: ./deployment_patch.yaml
+  - target:
+      kind: Deployment
+      name: bastion
+    path: ./deployment_patch.yaml
+  - path: ./httproute_patch.yaml

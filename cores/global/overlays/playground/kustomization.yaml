@@ -32,6 +32,16 @@ replacements:
   - source:
       kind: ConfigMap
       name: core-global-config
+      fieldPath: data.[hostname.chloria]
+    targets:
+      - select:
+          kind: Gateway
+          name: global
+        fieldPaths:
+          - spec.listeners.[name=chloria-.*].hostname
+  - source:
+      kind: ConfigMap
+      name: core-global-config
       fieldPath: data.[hostname.chloria.minio]
     targets:
       - select:
