@@ -1,0 +1,76 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: collect-news
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  concurrencyPolicy: Replace
+  schedule: "0 */12 * * *" # UTC time zone
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: chloria-backend
+          containers:
+            # Ref: https://github.com/metalwhale/chloria/blob/main/.github/workflows/job.yml
+            - name: collect-news
+              image: metalwhaledev/chloria-job:0.1.0
+              imagePullPolicy: Always
+              env:
+                - name: NEWSDATA_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: chloria-secrets
+                      key: newsdata_api_key
+                - name: NEWSDATA_PAGES_NUM_LIMIT
+                  # Free Plan: 30 credits every 15 minutes
+                  # Doc: https://newsdata.io/documentation/#rate-limit
+                  value: "30"
+                - name: MINIO_OPERATOR_CACERT_FILE
+                  value: /usr/local/share/ca-certificates/operator.crt
+                - name: MINIO_WEB_IDENTITY_TOKEN_FILE
+                  value: /var/run/secrets/kubernetes.io/serviceaccount/token
+                - name: POSTGRESQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: chloria-cnpg-cluster-init-auth
+                      key: password
+                - name: CHLORIA_NEWS_FETCHERS
+                  value: newsdata,yahoo
+                - name: CHLORIA_JOB_INTERVAL
+                  value: "12" # Job runs every 12h. Ref: `spec.schedule`
+                - name: CHLORIA_ORIGIN_BUCKET_NAME
+                  value: origin # Ref: `/projects/chloria-minio/base/ocean/configmap.yaml` file
+                - name: CHLORIA_CASE_PERMITS_NUM
+                  value: "10"
+                - name: CHLORIA_LOG_LEVEL
+                  value: info
+                # More values will be added here. Ref: `../../overlays/${environment}/cronjob_patch.yaml` file
+              command:
+                - chloria-job
+              volumeMounts:
+                - name: operator-ca-tls
+                  mountPath: /usr/local/share/ca-certificates/operator.crt
+                  subPath: ca.crt
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "250m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["all"]
+                readOnlyRootFilesystem: true
+                runAsUser: 1000
+                runAsNonRoot: true
+          volumes:
+            - name: operator-ca-tls
+              secret:
+                secretName: operator-ca-tls
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 1

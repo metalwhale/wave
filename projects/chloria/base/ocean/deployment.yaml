@@ -1,0 +1,123 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bastion
+  labels:
+    app: bastion
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bastion
+  template:
+    metadata:
+      labels:
+        app: bastion
+    spec:
+      serviceAccountName: chloria-backend
+      containers:
+        - name: bastion
+          image: rust:1.84.0-bookworm
+          env:
+            - name: MINIO_OPERATOR_CACERT_FILE
+              value: /usr/local/share/ca-certificates/operator.crt
+            - name: MINIO_WEB_IDENTITY_TOKEN_FILE
+              value: /var/run/secrets/kubernetes.io/serviceaccount/token
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: chloria-cnpg-cluster-init-auth
+                  key: password
+            - name: CHLORIA_ORIGIN_BUCKET_NAME
+              value: origin # Ref: `/projects/chloria-minio/base/ocean/configmap.yaml` file
+            # More values will be added here. Ref: `../../overlays/${environment}/deployment_patch.yaml` file
+          volumeMounts:
+            - name: operator-ca-tls
+              mountPath: /usr/local/share/ca-certificates/operator.crt
+              subPath: ca.crt
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: 500m
+          stdin: true
+          tty: true
+      volumes:
+        - name: operator-ca-tls
+          secret:
+            secretName: operator-ca-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chloria-api
+  labels:
+    app: chloria-api
+spec:
+  revisionHistoryLimit: 1
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chloria-api
+  template:
+    metadata:
+      labels:
+        app: chloria-api
+    spec:
+      serviceAccountName: chloria-backend
+      containers:
+        # Ref: https://github.com/metalwhale/chloria/blob/main/.github/workflows/api.yml
+        - name: chloria-api
+          image: metalwhaledev/chloria-api:0.1.0
+          imagePullPolicy: Always
+          env:
+            - name: MINIO_OPERATOR_CACERT_FILE
+              value: /usr/local/share/ca-certificates/operator.crt
+            - name: MINIO_WEB_IDENTITY_TOKEN_FILE
+              value: /var/run/secrets/kubernetes.io/serviceaccount/token
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: chloria-cnpg-cluster-init-auth
+                  key: password
+            - name: CHLORIA_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: chloria-secrets
+                  key: chloria_jwt_key
+            - name: CHLORIA_JWT_LIFETIME
+              value: "60" # In seconds
+            - name: CHLORIA_API_PORT
+              value: "3000"
+            - name: CHLORIA_ORIGIN_BUCKET_NAME
+              value: origin # Ref: `/projects/chloria-minio/base/ocean/configmap.yaml` file
+            - name: CHLORIA_CASE_PERMITS_NUM
+              value: "10"
+            - name: CHLORIA_LOG_LEVEL
+              value: info
+            # More values will be added here. Ref: `../../overlays/${environment}/deployment_patch.yaml` file
+          command:
+            - chloria-api
+          volumeMounts:
+            - name: operator-ca-tls
+              mountPath: /usr/local/share/ca-certificates/operator.crt
+              subPath: ca.crt
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["all"]
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            runAsNonRoot: true
+      volumes:
+        - name: operator-ca-tls
+          secret:
+            secretName: operator-ca-tls

@@ -1,0 +1,8 @@
+---
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: DATABASE_URL
+    # The names of database and user are both `app`.
+    # Ref: `/projects/chloria-cnpg/source/templates/application.yaml` file
+    value: postgres://app:$(POSTGRESQL_PASSWORD)@chloria-cnpg-cluster-rw.playground-chloria-cnpg.svc/app
