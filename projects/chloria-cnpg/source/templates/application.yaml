@@ -37,6 +37,17 @@ spec:
         releaseName: chloria-cnpg-cluster
         valuesObject:
           cluster:
+            # Doc:
+            # - https://cloudnative-pg.io/documentation/1.25/bootstrap/#bootstrap-an-empty-cluster-initdb
+            # - https://cloudnative-pg.io/documentation/1.25/cloudnative-pg.v1/#postgresql-cnpg-io-v1-BootstrapInitDB
+            # Note:
+            # - Operator chart version: `0.23.0` (Ref: `/cores/cnpg-operator/source/templates/application.yaml` file)
+            # - Operator version: `1.25.0` (Ref: https://github.com/cloudnative-pg/charts/blob/cloudnative-pg-v0.23.0/charts/cloudnative-pg/Chart.yaml#L26)
+            initdb:
+              database: app
+              owner: app
+              secret:
+                name: chloria-cnpg-cluster-init-auth
             storage:
               storageClass: local-path
     - repoURL: https://github.com/metalwhale/wave.git
