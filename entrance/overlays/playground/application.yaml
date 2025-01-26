@@ -14,6 +14,12 @@ spec:
           environment: PLACEHOLDER # Ref: `./kustomization.yaml` file
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
+      path: projects/archaist-cnpg/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `./kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
       path: projects/chloria-minio/source
       helm:
         valuesObject:
