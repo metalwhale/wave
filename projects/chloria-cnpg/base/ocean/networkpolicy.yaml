@@ -1,0 +1,18 @@
+---
+# Doc: https://doc.crds.dev/github.com/cilium/cilium/cilium.io/CiliumNetworkPolicy/v2@1.16.5
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: chloria-cnpg-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: core-cnpg-operator
+    - fromEndpoints:
+        - matchLabels: PLACEHOLDER # Ref: `../../source/templates/application.yaml` file
+    - fromEndpoints:
+        - matchLabels: PLACEHOLDER # Ref: `../../source/templates/application.yaml` file
