@@ -1,0 +1,65 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.environment }}-chloria-cnpg
+  labels:
+    name: {{ .Values.environment }}-chloria-cnpg
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.environment }}-chloria-cnpg
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  sourceRepos:
+    - https://cloudnative-pg.github.io/charts
+    - https://github.com/metalwhale/wave.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: {{ .Values.environment }}-chloria-cnpg
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.environment }}-chloria-cnpg
+spec:
+  project: {{ .Values.environment }}-chloria-cnpg
+  sources:
+    - repoURL: https://cloudnative-pg.github.io/charts # Doc: https://github.com/cloudnative-pg/charts/tree/cluster-v0.2.0
+      targetRevision: 0.2.0 # Doc: https://artifacthub.io/packages/helm/cloudnative-pg/cluster/0.2.0
+      chart: cluster
+      helm:
+        releaseName: chloria-cnpg-cluster
+        valuesObject:
+          cluster:
+            storage:
+              storageClass: local-path
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: projects/chloria-cnpg/overlays/{{ .Values.environment }}
+      kustomize:
+        patches:
+          - target:
+              kind: CiliumNetworkPolicy
+              name: cnpg-cluster
+            patch: |-
+              - op: replace
+                path: /spec/ingress/1/fromEndpoints/0/matchLabels
+                value:
+                  "k8s:io.kubernetes.pod.namespace": {{ .Values.environment }}-chloria-cnpg
+              - op: replace
+                path: /spec/ingress/2/fromEndpoints/0/matchLabels
+                value:
+                  "k8s:io.kubernetes.pod.namespace": {{ .Values.environment }}-chloria
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.environment }}-chloria-cnpg
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
