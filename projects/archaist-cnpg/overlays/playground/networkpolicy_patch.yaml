@@ -1,0 +1,13 @@
+---
+- op: add
+  path: /spec/ingress/-
+  value:
+    fromEndpoints:
+      - matchLabels:
+          k8s:io.kubernetes.pod.namespace: playground-archaist-cnpg
+- op: add
+  path: /spec/ingress/-
+  value:
+    fromEndpoints:
+      - matchLabels:
+          k8s:io.kubernetes.pod.namespace: playground-archaist

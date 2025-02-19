@@ -3,3 +3,9 @@ kind: Kustomization
 
 resources:
   - ../../base/ocean
+
+patches:
+  - target:
+      kind: CiliumNetworkPolicy
+      name: cnpg-cluster
+    path: ./networkpolicy_patch.yaml

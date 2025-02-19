@@ -12,7 +12,4 @@ spec:
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: core-cnpg-operator
-    - fromEndpoints:
-        - matchLabels: PLACEHOLDER # Ref: `../../source/templates/application.yaml` file
-    - fromEndpoints:
-        - matchLabels: PLACEHOLDER # Ref: `../../source/templates/application.yaml` file
+    # More values will be added here. Ref: `../../overlays/${environment}/networkpolicy_patch.yaml` file
