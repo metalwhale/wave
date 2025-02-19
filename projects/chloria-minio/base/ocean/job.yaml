@@ -20,7 +20,7 @@ spec:
               value: http://minio
             - name: MC_WEB_IDENTITY_TOKEN_FILE_chloria
               value: /var/run/secrets/kubernetes.io/serviceaccount/token
-            # New env vars will be appended here. Ref: `../../source/templates/application.yaml` file
+            # More values will be added here. Ref: `../../overlays/${environment}/job_patch.yaml` file
           volumeMounts:
             - name: operator-ca-tls
               mountPath: /root/.mc/certs/CAs/operator.crt # Doc: https://min.io/docs/minio/linux/reference/minio-mc.html#certificates

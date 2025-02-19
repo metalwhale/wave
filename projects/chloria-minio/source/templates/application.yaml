@@ -71,24 +71,6 @@ spec:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: projects/chloria-minio/overlays/{{ .Values.environment }}
-      kustomize:
-        patches:
-          - target:
-              kind: PolicyBinding
-              name: mc-job
-            patch: |-
-              - op: replace
-                path: /spec/application/namespace
-                value: {{ .Values.environment }}-chloria-minio
-          - target:
-              kind: Job
-              name: setup-origin-bucket
-            patch: |-
-              - op: add
-                path: /spec/template/spec/containers/0/env/-
-                value:
-                  name: MC_STS_ENDPOINT_chloria
-                  value: https://sts.core-minio-operator.svc.cluster.local:4223/sts/{{ .Values.environment }}-chloria-minio
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.environment }}-chloria-minio

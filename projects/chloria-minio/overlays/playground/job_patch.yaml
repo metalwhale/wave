@@ -1,0 +1,6 @@
+---
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: MC_STS_ENDPOINT_chloria
+    value: https://sts.core-minio-operator.svc.cluster.local:4223/sts/playground-chloria-minio

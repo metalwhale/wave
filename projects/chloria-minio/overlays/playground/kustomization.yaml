@@ -7,3 +7,8 @@ resources:
 
 patches:
   - path: ./httproute_patch.yaml
+  - path: ./policybinding_patch.yaml
+  - target:
+      kind: Job
+      name: setup-origin-bucket
+    path: ./job_patch.yaml
