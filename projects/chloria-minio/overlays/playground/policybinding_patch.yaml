@@ -1,0 +1,8 @@
+---
+apiVersion: sts.min.io/v1beta1
+kind: PolicyBinding
+metadata:
+  name: mc-job
+spec:
+  application:
+    namespace: playground-chloria-minio

@@ -42,20 +42,6 @@ spec:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: projects/archaist-cnpg/overlays/{{ .Values.environment }}
-      kustomize:
-        patches:
-          - target:
-              kind: CiliumNetworkPolicy
-              name: cnpg-cluster
-            patch: |-
-              - op: replace
-                path: /spec/ingress/1/fromEndpoints/0/matchLabels
-                value:
-                  "k8s:io.kubernetes.pod.namespace": {{ .Values.environment }}-archaist-cnpg
-              - op: replace
-                path: /spec/ingress/2/fromEndpoints/0/matchLabels
-                value:
-                  "k8s:io.kubernetes.pod.namespace": {{ .Values.environment }}-archaist
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.environment }}-archaist-cnpg

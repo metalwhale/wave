@@ -6,7 +6,7 @@ metadata:
   name: mc-job
 spec:
   application:
-    namespace: PLACEHOLDER # Ref: `../../source/templates/application.yaml` file
+    namespace: PLACEHOLDER # Ref: `../../overlays/${environment}/policybinding_patch.yaml` file
     serviceaccount: mc-job
   policies:
     # Doc: https://min.io/docs/minio/linux/administration/identity-access-management/policy-based-access-control.html
