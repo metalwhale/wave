@@ -1,0 +1,42 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: core
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  sourceRepos:
+    - https://github.com/metalwhale/wave.git
+    - https://helm.cilium.io/ # `cilium` core
+    - https://argoproj.github.io/argo-helm # `argocd` core
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wave-cores
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/cilium/source
+      helm:
+        valuesObject:
+          provider: ocean
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/argocd/source
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
