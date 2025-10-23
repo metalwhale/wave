@@ -1,0 +1,10 @@
+# Ref:
+# - `../../source/templates/application.yaml` file
+# - https://github.com/metalwhale/ocean/blob/main/kubernetes/inventory/group_vars/k8s_cluster/k8s-net-cilium.yml
+
+# Doc: https://docs.cilium.io/en/v1.18/network/l2-announcements/
+l2announcements:
+  # Enable l2 announcement from cilium to replace Metallb
+  enabled: true
+# Doc: https://docs.cilium.io/en/v1.18/network/kubernetes/kubeproxy-free/
+kubeProxyReplacement: true

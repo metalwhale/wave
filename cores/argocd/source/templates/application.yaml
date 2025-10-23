@@ -1,0 +1,35 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-argocd
+spec:
+  project: core
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      targetRevision: 9.0.3 # Doc: https://artifacthub.io/packages/helm/argo/argo-cd/9.0.3
+      chart: argo-cd
+      helm:
+        releaseName: argo-cd
+        valuesObject:
+          configs:
+            cm:
+              # Doc: https://argo-cd.readthedocs.io/en/release-3.1/user-guide/kustomize/#kustomizing-helm-charts
+              kustomize.buildOptions: --enable-helm
+              # Doc: https://docs.cilium.io/en/v1.18/configuration/argocd-issues/#argo-cd-deletes-customresourcedefinitions
+              resource.exclusions: |
+                - apiGroups:
+                    - cilium.io
+                  kinds:
+                    - CiliumIdentity
+                  clusters:
+                    - "*"
+              # Doc: https://argo-cd.readthedocs.io/en/release-3.1/operator-manual/web_based_terminal/
+              exec.enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

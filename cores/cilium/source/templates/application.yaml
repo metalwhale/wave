@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-cilium
+spec:
+  project: core
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      ref: waveRepo
+    - repoURL: https://helm.cilium.io/
+      targetRevision: 1.18.2 # Doc: https://artifacthub.io/packages/helm/cilium/cilium/1.18.2
+      chart: cilium
+      helm:
+        releaseName: cilium
+        valuesObject:
+          hubble:
+            relay:
+              enabled: true
+        valueFiles:
+          - $waveRepo/cores/cilium/base/{{ .Values.provider }}/helm_values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
