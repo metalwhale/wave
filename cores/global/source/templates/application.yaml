@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-global
+  labels:
+    name: core-global
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-global
+spec:
+  project: core
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/global/overlays/{{ .Values.environment }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: core-global
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

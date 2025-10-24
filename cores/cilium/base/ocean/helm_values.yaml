@@ -8,3 +8,7 @@ l2announcements:
   enabled: true
 # Doc: https://docs.cilium.io/en/v1.18/network/kubernetes/kubeproxy-free/
 kubeProxyReplacement: true
+# Doc: https://docs.cilium.io/en/v1.18/network/servicemesh/gateway-api/gateway-api/#installation
+# Remember to restart `deployment/cilium-operator` and `ds/cilium` to enable Cilium Gateway API Controller
+gatewayAPI:
+  enabled: true

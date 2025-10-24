@@ -20,6 +20,9 @@ spec:
               enabled: true
         valueFiles:
           - $waveRepo/cores/cilium/base/{{ .Values.provider }}/helm_values.yaml
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/cilium/overlays/{{ .Values.environment }}
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
