@@ -26,13 +26,26 @@ spec:
   sources:
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
+      path: cores/system/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
       path: cores/cilium/source
       helm:
         valuesObject:
           provider: ocean
+          environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
     - repoURL: https://github.com/metalwhale/wave.git
       targetRevision: main
       path: cores/argocd/source
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/global/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `../../overlays/${environment}/kustomization.yaml` file
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

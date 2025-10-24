@@ -1,0 +1,18 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-system
+spec:
+  project: core
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: cores/system/overlays/{{ .Values.environment }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
