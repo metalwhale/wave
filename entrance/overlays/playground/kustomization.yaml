@@ -3,4 +3,17 @@ kind: Kustomization
 namespace: argocd
 
 resources:
+  - ./configmap.yaml
   - ../../base/ocean # Addons and cores
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: wave-config
+      fieldPath: data.environment
+    targets:
+      - select:
+          kind: Application
+          name: wave-cores
+        fieldPaths:
+          - spec.sources.*.helm.valuesObject.environment
