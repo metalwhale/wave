@@ -5,6 +5,7 @@ namespace: argocd
 resources:
   - ./configmap.yaml
   - ../../base/ocean # Addons and cores
+  - ./application.yaml # Projects
 
 replacements:
   - source:
@@ -15,5 +16,10 @@ replacements:
       - select:
           kind: Application
           name: wave-cores
+        fieldPaths:
+          - spec.sources.*.helm.valuesObject.environment
+      - select:
+          kind: Application
+          name: wave-projects
         fieldPaths:
           - spec.sources.*.helm.valuesObject.environment

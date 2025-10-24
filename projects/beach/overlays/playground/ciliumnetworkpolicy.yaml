@@ -1,0 +1,25 @@
+---
+# Doc: https://doc.crds.dev/github.com/cilium/cilium/cilium.io/CiliumNetworkPolicy/v2@1.18.2
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: beach
+spec:
+  endpointSelector:
+    matchLabels:
+      app: beach
+  egress:
+    # For DNS lookup
+    - toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        # For `apt` command
+        - matchPattern: "*.debian.org"
+        # For `pip install` command
+        - matchName: "pypi.org"
+        - matchPattern: "*.pythonhosted.org"
