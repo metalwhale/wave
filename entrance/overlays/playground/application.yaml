@@ -1,0 +1,21 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wave-projects
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/metalwhale/wave.git
+      targetRevision: main
+      path: projects/beach/source
+      helm:
+        valuesObject:
+          environment: PLACEHOLDER # Ref: `./kustomization.yaml` file
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

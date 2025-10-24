@@ -1,0 +1,31 @@
+---
+# Doc: https://doc.crds.dev/github.com/cilium/cilium/cilium.io/CiliumNetworkPolicy/v2@1.18.2
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: island
+spec:
+  endpointSelector:
+    matchLabels:
+      app: island
+  egress:
+    # For DNS lookup.
+    # Doc: https://docs.cilium.io/en/v1.18/security/policy/language/#example
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    # For outbound traffic to the outside world.
+    - toFQDNs:
+        # For `apt` command
+        - matchPattern: "*.debian.org"
+        # For `pip install` command
+        - matchName: "pypi.org"
+        - matchPattern: "*.pythonhosted.org"
