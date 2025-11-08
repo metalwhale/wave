@@ -3,3 +3,16 @@ kind: Kustomization
 
 resources:
   - ../../base/ocean
+  - ./configmap.yaml
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: core-global-config
+      fieldPath: data.[hostname.argocd]
+    targets:
+      - select:
+          kind: Gateway
+          name: global
+        fieldPaths:
+          - spec.listeners.[name=argocd-.*].hostname
