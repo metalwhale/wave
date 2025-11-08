@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-local-path-storage
+  labels:
+    name: core-local-path-storage
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: core-local-path-provisioner
+spec:
+  project: core
+  sources:
+    - repoURL: https://github.com/rancher/local-path-provisioner.git
+      targetRevision: v0.0.32 # Doc: https://github.com/rancher/local-path-provisioner/tree/v0.0.32/deploy/chart/local-path-provisioner
+      path: deploy/chart/local-path-provisioner
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: core-local-path-storage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
